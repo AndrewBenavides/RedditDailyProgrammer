@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FS", "FS", "{FF2C44A4-E6F3-40F4-8B21-4E0951DCAC16}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "C001_E", "FS\C001_E\C001_E.fsproj", "{30EB15D7-4A45-4606-B2B1-6D25556FFDF5}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "C002_E", "FS\C002_E\C002_E.fsproj", "{DD587649-34F8-421C-BE5A-424414E5001C}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "C003_E", "FS\C003_E\C003_E.fsproj", "{1A89031B-F208-4C28-B1E7-D3E67B873508}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{DD587649-34F8-421C-BE5A-424414E5001C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD587649-34F8-421C-BE5A-424414E5001C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD587649-34F8-421C-BE5A-424414E5001C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A89031B-F208-4C28-B1E7-D3E67B873508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A89031B-F208-4C28-B1E7-D3E67B873508}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A89031B-F208-4C28-B1E7-D3E67B873508}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A89031B-F208-4C28-B1E7-D3E67B873508}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -30,5 +36,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{30EB15D7-4A45-4606-B2B1-6D25556FFDF5} = {FF2C44A4-E6F3-40F4-8B21-4E0951DCAC16}
 		{DD587649-34F8-421C-BE5A-424414E5001C} = {FF2C44A4-E6F3-40F4-8B21-4E0951DCAC16}
+		{1A89031B-F208-4C28-B1E7-D3E67B873508} = {FF2C44A4-E6F3-40F4-8B21-4E0951DCAC16}
 	EndGlobalSection
 EndGlobal
