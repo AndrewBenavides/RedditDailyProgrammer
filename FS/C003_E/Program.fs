@@ -13,44 +13,59 @@ type CaesarCipher(characterShift: int, ?numberShift: int, ?punctuationShift: int
     let ShiftList lst shift =
         let a, b = List.partition (fun c -> c >= (GetShiftedHead lst shift)) lst
         List.append a b
-    
-    let buildCharList lst shift = 
-        { original = lst; shifted = ShiftList lst shift; }
-
-    let characters = buildCharList ['A'..'Z'] characterShift
-    let numbers = buildCharList ['0'..'9'] (defaultArg numberShift 0)
-    let punctuation = buildCharList (['!'..'~'] |> List.filter(fun c-> (System.Char.IsPunctuation(c)))) (defaultArg punctuationShift 0)
 
     let GetShiftedValue sourceList destinationList c =
         match List.tryFindIndex(fun e -> e = c) sourceList with
         | Some index -> List.nth destinationList index
         | None -> c
+    
+    let BuildCharList lst shift = 
+        { original = lst; shifted = ShiftList lst shift; }
+
+    let upperCase = BuildCharList ['A'..'Z'] characterShift
+    let lowerCase = BuildCharList ['a'..'z'] characterShift
+    let numbers = BuildCharList ['0'..'9'] (defaultArg numberShift 0)
+    let punctuation = BuildCharList (['!'..'~'] |> List.filter(fun c-> (System.Char.IsPunctuation(c)))) (defaultArg punctuationShift 0)
+
+    let Cipher cipher (message: string) =
+        let Map charlist str =
+            String.map (cipher charlist) str
+            (*
+                String.map has two parameters: 
+                    1) a function that takes a character and returns a character
+                    2) a string, which will be broken into characters that will be fed into the provided function
+                Here, the function is cipher, which is inferred as a function that takes a charList and a char and returns a char.
+                Below, the Encrypt and Decrypt functions are functions that take a charList and return a char.
+                Providing the Encrypt and Decrypt functions with a charList satifies the first parameter and String.map provides it
+                  with the second parameter, the char, from the str value that it is deconstructing.
+                Effectively, String.map runs the cipher, with the given charList, on every character in the string and then returns
+                  the reconstructed string that has been ciphered.
+
+                This might be basic someday, but it took a bit of thought to understand all the basics being brought together.
+            *)
+
+        Map upperCase message
+        |> Map lowerCase
+        |> Map numbers
+        |> Map punctuation
 
     member this.EncryptMessage (message: string) =
-        let upperMessage = message.ToUpper()
-
         let Encrypt (lst: charList) c =
             GetShiftedValue lst.original lst.shifted c
-        
-        String.map (Encrypt characters) upperMessage 
-        |> String.map (Encrypt numbers) 
-        |> String.map (Encrypt punctuation)
+
+        Cipher Encrypt message
 
     member this.DecryptMessage (message: string) =
-        let upperMessage = message.ToUpper()
-
         let Decrypt (lst: charList) c =
             GetShiftedValue lst.shifted lst.original c
 
-        String.map (Decrypt characters) upperMessage 
-        |> String.map (Decrypt numbers) 
-        |> String.map (Decrypt punctuation)
+        Cipher Decrypt message
 
 [<EntryPoint>]
 let main argv = 
     let cipher = new CaesarCipher(2,-2,3)
-    printfn "%s" (cipher.EncryptMessage "test! 1234?")
-    printfn "%s" (cipher.DecryptMessage "YJGP YKNN VJG DCPPGTU CPF XKEVQTA RCTCFGU EGNGDTCVG VJG FCA C DGVVGT YQTNF YCU YQP\\")
+    printfn "%s" (cipher.EncryptMessage "test! TEST! 1234?")
+    printfn "%s" (cipher.DecryptMessage "Yjgp yknn vjg dcppgtu cpf xkevqta rctcfgu egngdtcvg vjg fca c dgvvgt yqtnf ycu yqp\\")
     System.Console.ReadLine() |> ignore
     printfn "%A" argv
     0 // return an integer exit code
