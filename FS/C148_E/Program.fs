@@ -1,6 +1,4 @@
-﻿open System
-
-type InputParser(str: string) =
+﻿type InputParser(str: string) =
     static member Parse (str:string) =
         let inputs = 
             List.ofArray (str.Split(' '))
@@ -38,31 +36,31 @@ type CombinationLock(str: string) =
         |> CounterClockwise (snd elem)
 
     member this.Counter =
-        let AllButLast = List.length movements - 1
-        let ApplyMovementIndex index elem = (index + 1, elem)
+        let ApplyMovementIndex index elem = (index, elem)
         let HasEvenIndex elem = (fst elem % 2 = 0)
-
-        let indexedMovements = Seq.mapi ApplyMovementIndex movements
-        let lastDst = Seq.nth (List.length movements - 1) indexedMovements
-        let midMovements = Seq.take AllButLast indexedMovements
-
-        let TurnDialAccumulateClicks acc elem =
-            if HasEvenIndex elem then SpinCounterClockwise acc elem
-            else SpinClockwise acc elem
-
-        let LastTurn acc elem =
-            if HasEvenIndex elem then CounterClockwise (snd elem) acc
-            else Clockwise (snd elem) acc
-
         
-        (*  The fold is seeded with the state after the first move (one full turn, 0 position) is executed.
-            The fold then decides to spin clockwise or counterclockwise based on the movement (odd: CW, even: CCW)
-            and executes a full spin before moving to the destination.  *)
-        let firstMoveState = (ticks, 0)
-        let midMovesState = Seq.fold TurnDialAccumulateClicks firstMoveState midMovements 
-        let lastMoveState = LastTurn midMovesState lastDst
+        let indexedMovements = Seq.mapi ApplyMovementIndex ([0] @ movements)
+        
+        let TurnDialAccumulateClicks acc elem =
+            match elem with
+            | (index, _) when index = 0 -> Clockwise (snd elem) acc
+            | (index, _) when index = List.length movements && HasEvenIndex elem -> CounterClockwise (snd elem) acc
+            | (index, _) when index = List.length movements -> Clockwise (snd elem) acc
+            | _ when HasEvenIndex elem -> SpinCounterClockwise acc elem
+            | _ -> SpinClockwise acc elem
 
-        fst lastMoveState //snd lastMoveState is the final position that the process stopped at
+        (*  The first movement is executed as goto 0 from 0, or a full spin. 
+            
+            Before any intermediate movements are made, a preliminary full spin is executed.
+            The movement direction is determined by whether or not the movement index is even or odd. 
+            i.e. The 0th movement is even and counter-clockwise, the 1st movement is odd and clockwise.
+            
+            The final movement is executed as a direct spin to the final destination without a preliminary full spin.
+            The movement direction is determined by whether or not the movement index is even or odd.
+        *)
+
+        let clicks = fst (Seq.fold TurnDialAccumulateClicks (0,0) indexedMovements)
+        clicks
                 
 type CombinationLock2() =
     let f n x y z = 
