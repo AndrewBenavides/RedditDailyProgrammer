@@ -34,11 +34,11 @@ type CombinationLock1(str: string) =
     let Spin (acc, src: int) = (acc + ticks, src)
 
     let SpinClockwise (acc: int * int) (elem: int * int) =
-        Spin acc
+        if snd acc <> snd elem then Spin acc else acc
         |> Clockwise (snd elem)
 
     let SpinCounterClockwise (acc: int * int) (elem: int * int) =
-        Spin acc
+        if snd acc <> snd elem then Spin acc else acc
         |> CounterClockwise (snd elem)
 
     interface ICombinationLock with
@@ -74,8 +74,10 @@ type CombinationLock2(str: string) =
     let ticks, movements = InputParser.Parse(str)
 
     let f n x y z = 
-        let g a b = (n + b - a - 1) % n + 1 //(n + b - a - 1) gets the remainder, like Haskell's mod function appears to do
-        3 * n + x + g y x + g y z
+        let g a b = (n + b - a - 1) % n + 1 // (n + b - a - 1) gets the remainder, like Haskell's mod function appears to do
+        let clicks = 3 * n + x + g y x + g y z
+        if x = 0 then clicks - n else clicks // special handling to remove extra turn when the first movement is 0
+
 
     interface ICombinationLock with
         member this.Input = str
@@ -86,7 +88,7 @@ type CombinationLock3(str: string) =
     let ticks, movements = InputParser.Parse(str)
 
     let Move src dst = (ticks + dst - src - 1) % ticks + 1
-    //  g a b = (n + b - a - 1) % n + 1
+    // g a b = (n + b - a - 1) % n + 1
     let Spin = Move 0 0
     // 3 * n, as above in CombinationLock2, if executed 3 times will return 3 * ticks
     let Clockwise src dst = Move src dst
@@ -94,8 +96,8 @@ type CombinationLock3(str: string) =
     let CounterClockwise src dst = Move dst src
     // g y x, as above in CombinationLock2, a counter-clockwise movement
     // if ticks was set to 5 then we would find that 21 = spin + spin + cw 0 1 + spin + ccw 1 2 + cw 2 3
-    let SpinClockwise src dst = Spin + Clockwise src dst
-    let SpinCounterClockwise src dst = Spin + CounterClockwise src dst
+    let SpinClockwise src dst = if src <> dst then Spin + Clockwise src dst else Clockwise src dst
+    let SpinCounterClockwise src dst = if src <> dst then Spin + CounterClockwise src dst else CounterClockwise src dst
     
     interface ICombinationLock with
         member this.Input = str
@@ -126,9 +128,16 @@ let main argv =
     let PrintLockInfo (lock: ICombinationLock) lockType =
         printfn "Number of clicks for input \"%s\" using %s was %d" lock.Input lockType lock.Clicks |> ignore
 
-    PrintLockInfo (new CombinationLock1("5 1 2 3")) "CombinationLock1"
-    PrintLockInfo (new CombinationLock2("5 1 2 3")) "CombinationLock2"
-    PrintLockInfo (new CombinationLock3("5 1 2 3")) "CombinationLock3"
-    PrintLockInfo (new CombinationLock3("5 1 2 3 2")) "CombinationLock3"
-    PrintLockInfo (new CombinationLock3("60 12 32 48 1")) "CombinationLock3"
+    let PrintSuite input = 
+        PrintLockInfo (new CombinationLock1(input)) "CombinationLock1"
+        PrintLockInfo (new CombinationLock2(input)) "CombinationLock2"
+        PrintLockInfo (new CombinationLock3(input)) "CombinationLock3"
+        printfn ""
+
+    PrintSuite "5 1 2 3"
+    PrintSuite "5 0 0 0"
+    PrintSuite "5 1 2 1"
+    PrintSuite "5 3 2 1"
+    PrintSuite "100 25 23 1"
+    PrintLockInfo (new CombinationLock3("60 12 32 48 1 25 39 14 58")) "CombinationLock3"
     0 // return an integer exit code
