@@ -1,54 +1,75 @@
 ﻿open System
 
-type TreeBuilder(maxWidth: int, trunkChar:char, leafChar: char) =
-    let rand = System.Random()
-    let branchWidths = {1..2..maxWidth}
+let rand = Random()
 
-    let leafBuilder index =
-        let leafChar = 
-            let r = rand.Next(2, maxWidth)
-            if index % r = 0 then 'o' else leafChar
+let cprintf color format =
+    Printf.kprintf (fun str ->
+        let originalColor = Console.ForegroundColor
+        try
+            Console.ForegroundColor <- color
+            Console.Write str
+        finally
+            Console.ForegroundColor <- originalColor
+    ) format
 
-        sprintf "%c" leafChar
+type TreeBuilder(maxWidth, trunkChar, leafChar) =
+    let PrintReturn() =
+        printfn ""
 
-    let layerBuilder leafCount func =
-        let padding = (maxWidth - leafCount) / 2
-        String.init maxWidth (fun initIndex ->
-            let index = initIndex + 1
-            match index with
-            | index when index <= padding -> " "
-            | index when index > padding + leafCount -> " "
-            | index -> func index
-        )
+    let PrintSpace() =
+        printf " "
 
-    let branchBuilder width =
-        layerBuilder width leafBuilder
+    let PrintLeaf() =
+        if rand.Next(4) = 0 then //20% chance to print bauble?
+            cprintf (enum<ConsoleColor> (rand.Next(1,15))) "%c" 'o'
+        else
+            cprintf ConsoleColor.Green "%c" leafChar
 
-    let trunkBuilder =
-        layerBuilder 3 (fun i -> sprintf "%c" trunkChar)
+    let PrintTrunk() =
+        cprintf ConsoleColor.Yellow "%c" trunkChar
 
-    let branches = Seq.map branchBuilder branchWidths
+    member this.PrintTree() =
+        for level in (maxWidth / 2) .. -1 .. -1 do
+            let width = 
+                match level with
+                | -1 -> 3
+                | _ -> maxWidth - 2 * level
+            let padding = (maxWidth - width) / 2
+            for index in 0 .. maxWidth do
+                match index with
+                | _ when index = maxWidth -> PrintReturn()
+                | _ when index < padding -> PrintSpace()
+                | _ when index >= padding + width -> PrintSpace()
+                | _ when level = -1 -> PrintTrunk()
+                | _ -> PrintLeaf()
 
-    member this.Print() =
-        for branch in branches do printfn "%s" branch
-        printfn "%s" trunkBuilder
-
-type InputParser(input: string) =
+    
+type TreePrinter(input: string) =
     let args = input.Split(' ')
     
-    member this.MakeTree() =
+    member this.Print() =
         try
             let maxWidth = Int32.Parse(args.[0])
             let trunkChar = Char.Parse(args.[1])
             let leafChar = Char.Parse(args.[2])
+
+            if maxWidth < 3 || maxWidth > 21 then 
+                raise(NotSupportedException("Tree size is out of range."))
+            if maxWidth % 2 = 0 then
+                raise(NotSupportedException("Tree size must be odd."))
+
             let tree = new TreeBuilder(maxWidth, trunkChar, leafChar)
-            tree.Print()
+            printfn "%d character wide tree printed with '%c' trunk and '%c' leaves:" 
+                maxWidth trunkChar leafChar
+            tree.PrintTree()
+            printfn ""
         with
-            | _ -> printfn "Input was not valid."
+            | ex -> printfn "Input was not valid: %s" ex.Message
 
 [<EntryPoint>]
 let main argv = 
-    InputParser("3 # *").MakeTree()
-    InputParser("13 = +").MakeTree()
-    System.Console.ReadLine() |> ignore
+    TreePrinter("3 # *").Print()
+    TreePrinter("13 = +").Print()
+    TreePrinter("21 | _").Print()
+    //System.Console.ReadLine() |> ignore
     0 // return an integer exit code
