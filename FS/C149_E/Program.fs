@@ -1,35 +1,36 @@
-﻿
-let IsVowel c =
+﻿let GetVowels c =
     match c with
-    | 'a' | 'e' | 'i' | 'o' | 'u' -> true
-    | _ -> false
+    | 'a' | 'e' | 'i' | 'o' | 'u' -> c.ToString()
+    | _ -> ""
 
-let IsConsonant c =
+let GetConsonants c =
     match c with
-    | ' ' -> false
-    | _ when IsVowel c -> false
-    | _ -> true
+    | ' ' -> ""
+    | _ when GetVowels c = "" -> c.ToString()
+    | _ -> ""
 
 let Disemvowel str = 
-    let FindVowels = Seq.filter IsVowel
-    let FindConsonants = Seq.filter IsConsonant
+    let FindConsonants = String.collect GetConsonants
+    let FindVowels = String.collect GetVowels
 
     (FindConsonants str, FindVowels str)
 
+let PrintDisemvoweledCollections (input: string) =
+    let input = input.ToLower()
+    let OutputCollection title collection =
+        printfn "%-10s: %s" title collection
 
-let OutputSequence title (charSeq: seq<char>) =
-    printfn "%10s: %s" title (String.concat "" charSeq)
-
-let PrintDisemvoweledSequences input =
     let consonants, vowels = Disemvowel input
-    OutputSequence "Consonants" consonants
-    OutputSequence "Vowels" vowels
-    printfn ""
 
-let Print
+    OutputCollection "Input" input
+    OutputCollection "Consonants" consonants
+    OutputCollection "Vowels" vowels
+    printfn ""
 
 [<EntryPoint>]
 let main argv = 
-    //let test = "two drums and a cymbal fall off a cliff"
-    printfn "%A" argv
+    PrintDisemvoweledCollections "two drums and a cymbal fall off a cliff"
+    PrintDisemvoweledCollections "all those who believe in psychokinesis raise my hand"
+    PrintDisemvoweledCollections "did you hear about the excellent farmer who was outstanding in his field"
+    //System.Console.ReadLine() |> ignore
     0 // return an integer exit code
