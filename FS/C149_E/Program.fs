@@ -4,10 +4,10 @@ let IsConsonant letter = not (IsVowel letter)
 let WhereLetter func letter = if func letter then letter.ToString() else ""
 
 let Disemvowel (input: string) = 
-    let input = input.Replace(" ","").ToLower()
+    let fromInput = input.Replace(" ","").ToLower()
     printfn "%s" input
-    printfn "%s" (String.collect (WhereLetter IsConsonant) input)
-    printfn "%s" (String.collect (WhereLetter IsVowel) input)
+    printfn "%s" (String.collect (WhereLetter IsConsonant) fromInput)
+    printfn "%s" (String.collect (WhereLetter IsVowel) fromInput)
     printfn ""
 
 [<EntryPoint>]
