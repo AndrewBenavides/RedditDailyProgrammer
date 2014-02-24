@@ -10,10 +10,10 @@ let GetConsonants c =
     | _ -> ""
 
 let Disemvowel str = 
-    let FindConsonants = String.collect GetConsonants
-    let FindVowels = String.collect GetVowels
+    let CollectConsonants = String.collect GetConsonants
+    let CollectVowels = String.collect GetVowels
 
-    (FindConsonants str, FindVowels str)
+    (CollectConsonants str, CollectVowels str)
 
 let PrintDisemvoweledCollections (input: string) =
     let input = input.ToLower()
