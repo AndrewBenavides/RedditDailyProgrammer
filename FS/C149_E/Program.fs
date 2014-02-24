@@ -1,36 +1,19 @@
-﻿let GetVowels c =
-    match c with
-    | 'a' | 'e' | 'i' | 'o' | 'u' -> c.ToString()
-    | _ -> ""
+﻿let vowels = "aeiou".ToCharArray()
+let IsVowel letter = Array.exists (fun vowel -> letter = vowel) vowels
+let IsConsonant letter = not (IsVowel letter)
+let WhereLetter func letter = if func letter then letter.ToString() else ""
 
-let GetConsonants c =
-    match c with
-    | ' ' -> ""
-    | _ when GetVowels c = "" -> c.ToString()
-    | _ -> ""
-
-let Disemvowel str = 
-    let CollectConsonants = String.collect GetConsonants
-    let CollectVowels = String.collect GetVowels
-
-    (CollectConsonants str, CollectVowels str)
-
-let PrintDisemvoweledCollections (input: string) =
-    let input = input.ToLower()
-    let PrintCollection title collection =
-        printfn "%-10s: %s" title collection
-
-    let consonants, vowels = Disemvowel input
-
-    PrintCollection "Input" input
-    PrintCollection "Consonants" consonants
-    PrintCollection "Vowels" vowels
+let Disemvowel (input: string) = 
+    let input = input.Replace(" ","").ToLower()
+    printfn "%s" input
+    printfn "%s" (String.collect (WhereLetter IsConsonant) input)
+    printfn "%s" (String.collect (WhereLetter IsVowel) input)
     printfn ""
 
 [<EntryPoint>]
 let main argv = 
-    PrintDisemvoweledCollections "two drums and a cymbal fall off a cliff"
-    PrintDisemvoweledCollections "all those who believe in psychokinesis raise my hand"
-    PrintDisemvoweledCollections "did you hear about the excellent farmer who was outstanding in his field"
+    Disemvowel "two drums and a cymbal fall off a cliff"
+    Disemvowel "all those who believe in psychokinesis raise my hand"
+    Disemvowel "did you hear about the excellent farmer who was outstanding in his field"
     //System.Console.ReadLine() |> ignore
     0 // return an integer exit code
