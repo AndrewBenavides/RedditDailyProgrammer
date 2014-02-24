@@ -17,14 +17,14 @@ let Disemvowel str =
 
 let PrintDisemvoweledCollections (input: string) =
     let input = input.ToLower()
-    let OutputCollection title collection =
+    let PrintCollection title collection =
         printfn "%-10s: %s" title collection
 
     let consonants, vowels = Disemvowel input
 
-    OutputCollection "Input" input
-    OutputCollection "Consonants" consonants
-    OutputCollection "Vowels" vowels
+    PrintCollection "Input" input
+    PrintCollection "Consonants" consonants
+    PrintCollection "Vowels" vowels
     printfn ""
 
 [<EntryPoint>]
