@@ -7,7 +7,7 @@ let ListToString lst =
 let Disemvoweler (input: string) =
     let rec disemvoweler characters consonants vowels =
         match characters with
-        | [] -> List.rev vowels, List.rev consonants
+        | [] -> List.rev consonants, List.rev vowels
         | head::tail when IsVowel head -> disemvoweler tail consonants (head::vowels)
         | head::tail when head <> ' ' -> disemvoweler tail (head::consonants) vowels
         | _::tail -> disemvoweler tail consonants vowels
@@ -16,7 +16,7 @@ let Disemvoweler (input: string) =
     disemvoweler characters [] []
 
 let Disemvowel (input: string) = 
-    let vowels, consonants = Disemvoweler input
+    let consonants, vowels = Disemvoweler input
     printfn "%s" input
     printfn "%s" (ListToString consonants)
     printfn "%s" (ListToString vowels)
