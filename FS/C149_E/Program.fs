@@ -5,15 +5,14 @@ let ListToString lst =
     sb.Append((Array.ofList lst)).ToString()
 
 let Disemvoweler (input: string) =
-    let rec disemvoweler characters consonants vowels =
-        match characters with
-        | [] -> List.rev consonants, List.rev vowels
-        | head::tail when IsVowel head -> disemvoweler tail consonants (head::vowels)
-        | head::tail when head <> ' ' -> disemvoweler tail (head::consonants) vowels
-        | _::tail -> disemvoweler tail consonants vowels
-
-    let characters = List.ofArray (input.ToLower().ToCharArray())
-    disemvoweler characters [] []
+    let chars = input.ToLower().ToCharArray()
+    let consonants, vowels = 
+        Array.fold (fun acc elem ->
+            if IsVowel elem then (fst acc, elem::(snd acc))
+            elif elem <> ' ' then (elem::(fst acc), snd acc)
+            else acc
+        ) ([], []) chars
+    List.rev consonants, List.rev vowels
 
 let Disemvowel (input: string) = 
     let consonants, vowels = Disemvoweler input
