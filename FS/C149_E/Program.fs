@@ -1,13 +1,25 @@
 ﻿let vowels = "aeiou".ToCharArray()
 let IsVowel letter = Array.exists (fun vowel -> letter = vowel) vowels
-let IsConsonant letter = not (IsVowel letter)
-let WhereLetter func letter = if func letter then letter.ToString() else ""
+let ListToString lst = 
+    let sb = new System.Text.StringBuilder()
+    sb.Append((Array.ofList lst)).ToString()
+
+let Disemvoweler (input: string) =
+    let rec disemvoweler characters consonants vowels =
+        match characters with
+        | [] -> List.rev vowels, List.rev consonants
+        | head::tail when IsVowel head -> disemvoweler tail consonants (head::vowels)
+        | head::tail when head <> ' ' -> disemvoweler tail (head::consonants) vowels
+        | _::tail -> disemvoweler tail consonants vowels
+
+    let characters = List.ofArray (input.ToLower().ToCharArray())
+    disemvoweler characters [] []
 
 let Disemvowel (input: string) = 
-    let fromInput = input.Replace(" ","").ToLower()
+    let vowels, consonants = Disemvoweler input
     printfn "%s" input
-    printfn "%s" (String.collect (WhereLetter IsConsonant) fromInput)
-    printfn "%s" (String.collect (WhereLetter IsVowel) fromInput)
+    printfn "%s" (ListToString consonants)
+    printfn "%s" (ListToString vowels)
     printfn ""
 
 [<EntryPoint>]
