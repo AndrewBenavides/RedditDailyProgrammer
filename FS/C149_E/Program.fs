@@ -7,10 +7,10 @@ let ListToString lst =
 let Disemvoweler (input: string) =
     let chars = input.ToLower().ToCharArray()
     let consonants, vowels = 
-        Array.fold (fun acc elem ->
-            if IsVowel elem then (fst acc, elem::(snd acc))
-            elif elem <> ' ' then (elem::(fst acc), snd acc)
-            else acc
+        Array.fold (fun (consonants, vowels) c ->
+            if IsVowel c then consonants, c::vowels
+            elif c <> ' ' then c::consonants, vowels
+            else consonants, vowels
         ) ([], []) chars
     List.rev consonants, List.rev vowels
 
