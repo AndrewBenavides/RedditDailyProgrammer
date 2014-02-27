@@ -1,25 +1,15 @@
-﻿let vowels = "aeiou".ToCharArray()
-let IsVowel letter = Array.exists (fun vowel -> letter = vowel) vowels
-let ListToString lst = 
-    let sb = new System.Text.StringBuilder()
-    sb.Append((Array.ofList lst)).ToString()
+﻿let IsVowel letter = Seq.exists ((=) letter) "aeiou"
+
+let Stringify charlist = Seq.fold (fun s c -> s + string c) "" charlist
 
 let Disemvoweler (input: string) =
-    let chars = input.ToLower().ToCharArray()
-    let consonants, vowels = 
-        Array.fold (fun (consonants, vowels) c ->
-            if IsVowel c then consonants, c::vowels
-            elif c <> ' ' then c::consonants, vowels
-            else consonants, vowels
-        ) ([], []) chars
-    List.rev consonants, List.rev vowels
+    let chars = List.ofSeq (input.ToLower().Replace(" ",""))
+    let vowels, consonants = List.partition (fun e -> IsVowel e) chars
+    Stringify consonants, Stringify vowels
 
 let Disemvowel (input: string) = 
     let consonants, vowels = Disemvoweler input
-    printfn "%s" input
-    printfn "%s" (ListToString consonants)
-    printfn "%s" (ListToString vowels)
-    printfn ""
+    printf "%s\n%s\n%s\n\n" input consonants vowels
 
 [<EntryPoint>]
 let main argv = 
