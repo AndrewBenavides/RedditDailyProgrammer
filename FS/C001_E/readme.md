@@ -1,4 +1,6 @@
-﻿Create a program that will ask the users name, age, and reddit username. Have it tell them the information back, in the format:
+# Simple Input and Output
+
+Create a program that will ask the users name, age, and reddit username. Have it tell them the information back, in the format:
 
     your name is (blank), you are (blank) years old, and your username is (blank)
 

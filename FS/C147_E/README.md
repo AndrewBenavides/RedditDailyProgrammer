@@ -1,4 +1,4 @@
-﻿# Sport Points
+# Sport Points
 
 You must write code that verifies the awarded points for a fictional sport are valid. This sport is a simplification of [American Football](http://en.wikipedia.org/wiki/American_football#Scoring) scoring rules. This means that the score values must be any logical combination of the following four rewards:
 
