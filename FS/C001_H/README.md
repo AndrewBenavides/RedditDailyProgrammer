@@ -6,3 +6,5 @@ In other words:
 2. Using the menu driven program allow a user to add/delete items
 3. The menu should be based on an events calender where users enter the events by hour
 4. No events should be hard-coded
+
+[Source](http://www.reddit.com/r/dailyprogrammer/comments/pihtx/intermediate_challenge_1/)
