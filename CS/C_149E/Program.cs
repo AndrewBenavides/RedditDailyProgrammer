@@ -11,28 +11,13 @@ namespace C_149E {
             //Console.ReadLine();
         }
 
-        public static bool IsVowel(char c) {
-            return "aeiou".Contains(c);
-        }
-
-        public static Tuple<string, string> Disemvoweler(string input) {
+        public static void Disemvowel(string input) {
             var consonants = new StringBuilder();
             var vowels = new StringBuilder();
-
             foreach (char c in input.ToLower().Replace(" ", "")) {
-                if (IsVowel(c)) {
-                    vowels.Append(c);
-                } else {
-                    consonants.Append(c);
-                }
-            }
-
-            return new Tuple<string, string>(consonants.ToString(), vowels.ToString());
-        }
-
-        public static void Disemvowel(string input) {
-            var dis = Disemvoweler(input);
-            Console.Write("{0}\n{1}\n{2}\n\n", input, dis.Item1, dis.Item2);
+                var x = ("aeiou".Contains(c)) ? vowels.Append(c) : consonants.Append(c);
+            } 
+            Console.Write("{0}\n{1}\n{2}\n\n", input, consonants, vowels);
         }
     }
 }
