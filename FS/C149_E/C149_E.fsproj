@@ -47,7 +47,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.fs" />
+    <Compile Include="Disemvoweler.fs" />
     <None Include="App.config" />
     <None Include="README.md" />
   </ItemGroup>
