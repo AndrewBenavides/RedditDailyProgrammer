@@ -6,33 +6,27 @@ using System.Threading.Tasks;
 
 namespace C151_I {
     public class Phrase {
-        private Stack<char> _consonants;
-        private Stack<char> _vowels;
-
-        public Stack<Word> Words { get; private set; }
-
         public bool IsComplete { get; private set; }
         public bool IsDeadEnd { get; private set; }
 
-        public IList<Phrase> NextPhrases { get; private set; }
-        public IEnumerable<Phrase> SubPartialPhrases { get; private set; }
-        public IEnumerable<Phrase> SubPhrases { get; private set; }
+        public IEnumerable<Phrase> NextPhrases { get { return GetNextPhrases(); } }
+        public Stack<char> RemainingConsonants { get; private set; }
+        public Stack<char> RemainingVowels { get; private set; }
+        public IEnumerable<Phrase> SubPartialPhrases { get { return GetSubPartialPhrases(); } }
+        public IEnumerable<Phrase> SubPhrases { get { return GetSubPhrases(); } }
+        public Stack<Word> Words { get; private set; }
 
         public Phrase(Stack<Word> words, Stack<char> consonants, Stack<char> vowels) {
-            _consonants = consonants;
-            _vowels = vowels;
+            this.RemainingConsonants = consonants;
+            this.RemainingVowels = vowels;
             this.Words = words;
-            this.IsComplete = (!_consonants.Any() && !_vowels.Any()) ? true : false;
-
-            this.NextPhrases = GetNextPhrases();
-            this.SubPartialPhrases = GetSubPartialPhrases();
-            this.SubPhrases = GetSubPhrases();
+            this.IsComplete = (RemainingConsonants.Count == 0 && RemainingVowels.Count == 0) ? true : false;
         }
 
-        public IList<Phrase> GetNextPhrases() {
+        public IEnumerable<Phrase> GetNextPhrases() {
             var nextPhrases = new List<Phrase>();
             if (!this.IsComplete) {
-                var word = new Word("", _consonants, _vowels);
+                var word = new Word("", this.RemainingConsonants, this.RemainingVowels);
                 var submatches = word.SubMatches;
                 if (!submatches.Any()) {
                     this.IsDeadEnd = true;
@@ -58,8 +52,12 @@ namespace C151_I {
         }
 
         public IEnumerable<Phrase> GetSubPhrases() {
-            var phrases = this.SubPartialPhrases.Where(p => p.IsComplete).AsEnumerable();
-            return phrases;
+            if (this.IsComplete) yield return this;
+            foreach (var phrase in this.NextPhrases) {
+                foreach (var subphrase in phrase.SubPhrases) {
+                    yield return subphrase;
+                }
+            }
         }
 
         public override string ToString() {

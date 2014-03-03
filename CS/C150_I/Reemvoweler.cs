@@ -11,9 +11,11 @@ namespace C151_I {
         static void Main(string[] args) {
             var con = "wwllfndffthstrds";
             var vow = "eieoeaeoi";
+            //var con = "bbsrshpdlkftbllsndhvmrbndblbnsthndlts";
+            //var vow = "aieaeaeieooaaaeoeeaeoeaau";
 
             var phrase = new Phrase(new Stack<Word>(), new Stack<char>(con), new Stack<char>(vow));
-
+            Parser.GetMostRelevantPhrase(phrase);
         }
     }
 }

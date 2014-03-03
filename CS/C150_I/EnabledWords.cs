@@ -8,10 +8,25 @@ namespace C151_I {
     public static class EnabledWords {
         private static string _reverseEnabledWordsFilePath = ".\\enable1_rev.txt";
         private static string[] _reverseEnabledWords = GetReversedArray();
+        private static char[] _vowels = GetVowels();
 
         private static string[] GetReversedArray() {
             //http://stackoverflow.com/a/500930
             return ReadLines().ToArray();
+        }
+
+        private static IEnumerable<string> ReadLines() {
+            using (var reader = new System.IO.StreamReader(_reverseEnabledWordsFilePath)) {
+                while (!reader.EndOfStream) {
+                    yield return reader.ReadLine();
+                }
+            }
+        }
+
+        private static char[] GetVowels() {
+            var chars = "aeiouAEIOU".ToCharArray();
+            Array.Sort(chars);
+            return chars;
         }
 
         public static bool Contains(string str) {
@@ -28,13 +43,8 @@ namespace C151_I {
             return Array.BinarySearch(_reverseEnabledWords, str.Reverse2()) > -1 ? true : false;
         }
 
-        private static IEnumerable<string> ReadLines() {
-            using (var reader = new System.IO.StreamReader(_reverseEnabledWordsFilePath)) {
-                while (!reader.EndOfStream) {
-                    yield return reader.ReadLine();
-                }
-            }
+        public static bool IsVowel(char c) {
+            return Array.BinarySearch(_vowels, c) > -1 ? true : false;
         }
-
     }
 }
