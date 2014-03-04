@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace C151_I {
     public class Word {
         private string _word;
-        
+
+        public double Frequency { get { return Math.Log(EnabledWords.Frequency(_word)) * this.Length * 2; } }
         public bool IsPartialMatch { get { return EnabledWords.Contains(_word); } }
         public bool IsMatch { get { return EnabledWords.Matches(_word); } }
         public int Length { get; private set; }

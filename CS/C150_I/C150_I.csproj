@@ -56,6 +56,9 @@
     <Content Include="enable1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="enable1_freq.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="enable1_rev.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

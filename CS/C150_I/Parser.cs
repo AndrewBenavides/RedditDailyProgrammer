@@ -12,9 +12,9 @@ namespace C151_I {
         }
 
         public static string GetMostRelevantPhrase(Phrase phrase) {
-            var maxLen = phrase.SubPhrases.Max(p => LastWordLength(p));
-            var phrases = phrase.SubPhrases.Where(p => LastWordLength(p) == maxLen).ToList();
-            return "";
+            //var maxLen = phrase.SubPhrases.Max(p => LastWordLength(p));
+            var phrases = phrase.SubPhrases.OrderByDescending(sp => sp.Words.Sum(w => w.Frequency)).ToList();
+            return phrases.First().ToString();
         }
     }
 }

@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 namespace C151_I {
     class Program {
         static void Main(string[] args) {
-            var con = "wwllfndffthstrds";
-            var vow = "eieoeaeoi";
-            //var con = "bbsrshpdlkftbllsndhvmrbndblbnsthndlts";
-            //var vow = "aieaeaeieooaaaeoeeaeoeaau";
-
-            var phrase = new Phrase(new Stack<Word>(), new Stack<char>(con), new Stack<char>(vow));
-            Parser.GetMostRelevantPhrase(phrase);
+            var phrase1 = new Phrase(new Stack<Word>(), new Stack<char>("bbsrshpdlkftbllsndhvmrbndblbnsthndlts"), new Stack<char>("aieaeaeieooaaaeoeeaeoeaau")); //babies
+            var phrase2 = new Phrase(new Stack<Word>(), new Stack<char>("wwllfndffthstrds"), new Stack<char>("eieoeaeoi")); //asteroids
+            var phrase3 = new Phrase(new Stack<Word>(), new Stack<char>("llfyrbsshvtsmpntbncnfrmdbyncdt"), new Stack<char>("aoouiaeaeaoeoieeoieaeoe")); //biases
+            var a1 = Parser.GetMostRelevantPhrase(phrase1);
+            var a2 = Parser.GetMostRelevantPhrase(phrase2);
+            var a3 = Parser.GetMostRelevantPhrase(phrase3);
         }
     }
 }

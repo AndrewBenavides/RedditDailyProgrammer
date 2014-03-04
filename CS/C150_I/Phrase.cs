@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 
 namespace C151_I {
     public class Phrase {
@@ -32,13 +31,24 @@ namespace C151_I {
                 if (!submatches.Any()) {
                     this.IsDeadEnd = true;
                 } else {
-                    var maxMatchLen = submatches.Max(m => m.Length);
-                    var biggestMatches = submatches.Where(m => m.Length >= maxMatchLen - 1).OrderByDescending(m => m.Length).ToList(); //Beam search-ish?
-                    foreach (var match in biggestMatches) {
-                        var words = this.Words.Clone();
-                        words.Push(match);
-                        var next = new Phrase(words, match.RemainingConsonants.Clone(), match.RemainingVowels.Clone());
-                        nextPhrases.Add(next);
+                    var mostSignificant = submatches.Max(m => m.Frequency);
+                    var mostSignificantMatches = submatches.Where(m => m.Frequency == mostSignificant).ToList();
+                        foreach (var match in mostSignificantMatches) {
+                            var words = this.Words.Clone();
+                            words.Push(match);
+                            var next = new Phrase(words, match.RemainingConsonants.Clone(), match.RemainingVowels.Clone());
+                            nextPhrases.Add(next);
+                        }
+                        
+                    var longest = submatches.Max(m => m.Length);
+                    var longestMatches = submatches.Where(m => m.Length == longest).OrderByDescending(m => m.Frequency).Take(2);
+                    foreach (var match in longestMatches) {
+                        if (!mostSignificantMatches.Contains(match)) {
+                            var words = this.Words.Clone();
+                            words.Push(match);
+                            var next = new Phrase(words, match.RemainingConsonants.Clone(), match.RemainingVowels.Clone());
+                            nextPhrases.Add(next);
+                        }
                     }
                 }
             }

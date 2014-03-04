@@ -6,17 +6,26 @@ using System.Threading.Tasks;
 
 namespace C151_I {
     public static class EnabledWords {
-        private static string _reverseEnabledWordsFilePath = ".\\enable1_rev.txt";
         private static string[] _reverseEnabledWords = GetReversedArray();
+        private static Dictionary<string, int> _frequency = GetFrequency();
         private static char[] _vowels = GetVowels();
+
+        private static Dictionary<string, int> GetFrequency() {
+            var dict = new Dictionary<string, int>();
+            foreach (var line in ReadLines(".\\enable1_freq.txt")) {
+                var split = line.Split(' ');
+                dict.Add(split[0], int.Parse(split[1]));
+            }
+            return dict;
+        }
 
         private static string[] GetReversedArray() {
             //http://stackoverflow.com/a/500930
-            return ReadLines().ToArray();
+            return ReadLines(".\\enable1_rev.txt").ToArray();
         }
 
-        private static IEnumerable<string> ReadLines() {
-            using (var reader = new System.IO.StreamReader(_reverseEnabledWordsFilePath)) {
+        private static IEnumerable<string> ReadLines(string path) {
+            using (var reader = new System.IO.StreamReader(path)) {
                 while (!reader.EndOfStream) {
                     yield return reader.ReadLine();
                 }
@@ -37,6 +46,12 @@ namespace C151_I {
             } else {
                 return false;
             }
+        }
+
+        public static int Frequency(string str) {
+            int frequency = 0;
+            var successful = _frequency.TryGetValue(str, out frequency);
+            return frequency;
         }
 
         public static bool Matches(string str) {
