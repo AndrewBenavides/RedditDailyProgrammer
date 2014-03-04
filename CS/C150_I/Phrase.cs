@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace C151_I {
     public class Phrase {
@@ -27,11 +28,13 @@ namespace C151_I {
             var nextPhrases = new List<Phrase>();
             if (!this.IsComplete) {
                 var word = new Word("", this.RemainingConsonants, this.RemainingVowels);
-                var submatches = word.SubMatches;
+                var submatches = word.SubMatches.ToList();
                 if (!submatches.Any()) {
                     this.IsDeadEnd = true;
                 } else {
-                    foreach (var match in submatches) {
+                    var maxMatchLen = submatches.Max(m => m.Length);
+                    var biggestMatches = submatches.Where(m => m.Length >= maxMatchLen - 1).OrderByDescending(m => m.Length).ToList(); //Beam search-ish?
+                    foreach (var match in biggestMatches) {
                         var words = this.Words.Clone();
                         words.Push(match);
                         var next = new Phrase(words, match.RemainingConsonants.Clone(), match.RemainingVowels.Clone());

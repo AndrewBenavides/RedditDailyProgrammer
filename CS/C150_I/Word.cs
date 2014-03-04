@@ -10,6 +10,7 @@ namespace C151_I {
         
         public bool IsPartialMatch { get { return EnabledWords.Contains(_word); } }
         public bool IsMatch { get { return EnabledWords.Matches(_word); } }
+        public int Length { get; private set; }
         public Word NextConsonant { get { return GetNextWordWith(this.RemainingConsonants.Clone()); } }
         public Word NextVowel { get { return GetNextWordWith(this.RemainingVowels.Clone()); } }
         public Stack<char> RemainingConsonants { get; private set; }
@@ -19,6 +20,7 @@ namespace C151_I {
 
         public Word(string word, Stack<char> remainingConsonants, Stack<char> remainingVowels) {
             _word = word;
+            this.Length = word.Length;
             this.RemainingConsonants = remainingConsonants;
             this.RemainingVowels = remainingVowels;
         }
