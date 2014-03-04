@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace C151_I {
+namespace C150_I {
     public class Phrase {
         public bool IsComplete { get; private set; }
         public bool IsDeadEnd { get; private set; }
@@ -16,7 +16,15 @@ namespace C151_I {
         public IEnumerable<Phrase> SubPhrases { get { return GetSubPhrases(); } }
         public Stack<Word> Words { get; private set; }
 
+        public Phrase(string consonants, string vowels) {
+            Construct(new Stack<Word>(), new Stack<char>(consonants), new Stack<char>(vowels));
+        }
+
         public Phrase(Stack<Word> words, Stack<char> consonants, Stack<char> vowels) {
+            Construct(words, consonants, vowels);
+        }
+
+        private void Construct(Stack<Word> words, Stack<char> consonants, Stack<char> vowels) {
             this.RemainingConsonants = consonants;
             this.RemainingVowels = vowels;
             this.Words = words;
@@ -31,24 +39,25 @@ namespace C151_I {
                 if (!submatches.Any()) {
                     this.IsDeadEnd = true;
                 } else {
-                    var mostSignificant = submatches.Max(m => m.Frequency);
-                    var mostSignificantMatches = submatches.Where(m => m.Frequency == mostSignificant).ToList();
-                        foreach (var match in mostSignificantMatches) {
-                            var words = this.Words.Clone();
-                            words.Push(match);
-                            var next = new Phrase(words, match.RemainingConsonants.Clone(), match.RemainingVowels.Clone());
-                            nextPhrases.Add(next);
-                        }
-                        
+                    var mostSignificant = submatches.Max(m => m.Weight);
+                    var mostSignificantMatches = submatches.Where(m => m.Weight == mostSignificant).ToList();
+                    foreach (var match in mostSignificantMatches) {
+                        var words = this.Words.Clone();
+                        words.Push(match);
+                        var next = new Phrase(words, match.RemainingConsonants.Clone(), match.RemainingVowels.Clone());
+                        nextPhrases.Add(next);
+                    }
+
                     var longest = submatches.Max(m => m.Length);
-                    var longestMatches = submatches.Where(m => m.Length == longest).OrderByDescending(m => m.Frequency).Take(2);
+                    var longestMatches = submatches
+                        .Where(m => (m.Length >= longest - 1) && (!mostSignificantMatches.Contains(m)))
+                        .OrderByDescending(m => m.Weight)
+                        .Take(2);
                     foreach (var match in longestMatches) {
-                        if (!mostSignificantMatches.Contains(match)) {
-                            var words = this.Words.Clone();
-                            words.Push(match);
-                            var next = new Phrase(words, match.RemainingConsonants.Clone(), match.RemainingVowels.Clone());
-                            nextPhrases.Add(next);
-                        }
+                        var words = this.Words.Clone();
+                        words.Push(match);
+                        var next = new Phrase(words, match.RemainingConsonants.Clone(), match.RemainingVowels.Clone());
+                        nextPhrases.Add(next);
                     }
                 }
             }

@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace C151_I {
+namespace C150_I {
     public class Word {
         private string _word;
 
-        public double Frequency { get { return Math.Log(EnabledWords.Frequency(_word)) * this.Length * 2; } }
         public bool IsPartialMatch { get { return EnabledWords.Contains(_word); } }
         public bool IsMatch { get { return EnabledWords.Matches(_word); } }
         public int Length { get; private set; }
@@ -18,12 +17,22 @@ namespace C151_I {
         public Stack<char> RemainingVowels { get; set; }
         public IEnumerable<Word> SubMatches { get { return GetSubMatches(); } }
         public IEnumerable<Word> SubPartialMatches { get { return GetSubPartialMatches(); } }
+        public double Weight { get; private set; }
 
         public Word(string word, Stack<char> remainingConsonants, Stack<char> remainingVowels) {
             _word = word;
             this.Length = word.Length;
+            this.Weight = CalculateWeight(word);
             this.RemainingConsonants = remainingConsonants;
             this.RemainingVowels = remainingVowels;
+        }
+
+        private static double CalculateWeight(string word) {
+            var f = (Math.Pow(Math.Log(word.Length) * 1.5, Math.Log(EnabledWords.Frequency(word))) * 1000000);
+            f *= 1000000;
+            f += EnabledWords.Frequency(word);
+            f /= 10000;
+            return f;
         }
 
         private Word GetNextWordWith(Stack<char> charStack) {

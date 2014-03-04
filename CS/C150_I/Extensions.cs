@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace C151_I {
+namespace C150_I {
     public static class Extensions {
         public static Stack<T> Clone<T>(this Stack<T> source) {
             return new Stack<T>(source.Reverse());

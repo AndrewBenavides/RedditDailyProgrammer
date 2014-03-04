@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace C151_I {
+namespace C150_I {
     public static class EnabledWords {
         private static string[] _reverseEnabledWords = GetReversedArray();
         private static Dictionary<string, int> _frequency = GetFrequency();
