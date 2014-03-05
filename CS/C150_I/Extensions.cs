@@ -10,13 +10,6 @@ namespace C150_I {
             return new Stack<T>(source.Reverse());
         }
 
-        public static string Reverse2(this string str) {
-            var builder = new StringBuilder();
-            var chars = str.ToCharArray();
-            Array.Reverse(chars);
-            return builder.Append(chars).ToString();
-        }
-
         public static string Stringify(this Stack<Word> stack) {
             var clone = stack.Clone();
             var output = new StringBuilder();

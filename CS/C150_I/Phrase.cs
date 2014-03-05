@@ -9,8 +9,12 @@ namespace C150_I {
         public bool IsComplete { get; private set; }
         public bool IsDeadEnd { get; private set; }
 
-        public IEnumerable<Phrase> NextPhrases { get { return GetNextPhrases(); } }
-        public IEnumerable<Phrase> NextSignificantPhrases { get { return GetNextSignificantPhrases(); } }
+        public IEnumerable<Phrase> NextPhrases {
+            get { return GetNextPhrases(); }
+        }
+        public IEnumerable<Phrase> NextSignificantPhrases {
+            get { return GetNextSignificantPhrases(); }
+        }
         public Stack<char> RemainingConsonants { get; private set; }
         public Stack<char> RemainingVowels { get; private set; }
         public IEnumerable<Phrase> SubPartialPhrases {
@@ -63,7 +67,7 @@ namespace C150_I {
             IEnumerable<Phrase> phrases = new List<Phrase>();
             var words = GetNextWords();
             if (!this.IsDeadEnd && !this.IsComplete) {
-                var targetWeight = words.Max(w => w.Weight);
+                var targetWeight = words.Max(w => w.Weight) * 0.85;
                 //weight floor can be adjusted here, but will increase processing time
                 var significantWords = words
                     .Where(w => w.Weight >= targetWeight);

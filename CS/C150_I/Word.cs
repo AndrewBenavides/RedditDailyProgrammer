@@ -8,31 +8,45 @@ namespace C150_I {
     public class Word {
         private string _word;
 
-        public bool IsPartialMatch { get { return EnabledWords.Contains(_word); } }
-        public bool IsMatch { get { return EnabledWords.Matches(_word); } }
+        public int Frequency {
+            get { return EnabledWords.Frequency(_word); }
+        }
+        public bool IsPartialMatch {
+            get { return EnabledWords.Contains(_word); }
+        }
+        public bool IsMatch {
+            get { return EnabledWords.Matches(_word); }
+        }
         public int Length { get; private set; }
-        public Word NextConsonant { get { return GetNextWordWith(this.RemainingConsonants.Clone()); } }
-        public Word NextVowel { get { return GetNextWordWith(this.RemainingVowels.Clone()); } }
+        public Word NextConsonant {
+            get { return GetNextWordWith(this.RemainingConsonants.Clone()); }
+        }
+        public Word NextVowel {
+            get { return GetNextWordWith(this.RemainingVowels.Clone()); }
+        }
         public Stack<char> RemainingConsonants { get; private set; }
-        public Stack<char> RemainingVowels { get; set; }
-        public IEnumerable<Word> SubMatches { get { return GetSubMatches(); } }
-        public IEnumerable<Word> SubPartialMatches { get { return GetSubPartialMatches(); } }
-        public double Weight { get; private set; }
+        public Stack<char> RemainingVowels { get; private set; }
+        public IEnumerable<Word> SubMatches {
+            get { return GetSubMatches(includePartial: false); }
+        }
+        public IEnumerable<Word> SubPartialMatches {
+            get { return GetSubMatches(includePartial: true); }
+        }
+        public double Weight {
+            get { return CalculateWeight(_word); }
+        }
 
         public Word(string word, Stack<char> remainingConsonants, Stack<char> remainingVowels) {
             _word = word;
             this.Length = word.Length;
-            this.Weight = CalculateWeight(word);
             this.RemainingConsonants = remainingConsonants;
             this.RemainingVowels = remainingVowels;
         }
 
         private static double CalculateWeight(string word) {
-            var f = (Math.Pow(Math.Log(word.Length) * 1.5, Math.Log(EnabledWords.Frequency(word))) * 1000000);
-            f *= 1000000;
-            f += EnabledWords.Frequency(word);
-            f /= 10000;
-            return f;
+            var frequency = EnabledWords.Frequency(word);
+            var weight = (frequency > 0) ? (Math.Pow(word.Length, 2) * Math.Log(frequency)) : 0;
+            return weight;
         }
 
         private Word GetNextWordWith(Stack<char> charStack) {
@@ -40,7 +54,7 @@ namespace C150_I {
                 var c = charStack.Pop();
                 var word = c + _word;
                 Word next;
-               if (EnabledWords.IsVowel(c)) {
+                if (EnabledWords.IsVowel(c)) {
                     next = new Word(word, this.RemainingConsonants.Clone(), charStack);
                 } else {
                     next = new Word(word, charStack, this.RemainingVowels.Clone());
@@ -51,24 +65,15 @@ namespace C150_I {
             }
         }
 
-        private IEnumerable<Word> GetSubMatches() {
-            if (this.IsMatch) yield return this;
-            if (this.NextConsonant != null) {
-                foreach (var match in this.NextConsonant.SubMatches) { yield return match; }
-            }
-            if (this.NextVowel != null) {
-                foreach (var match in this.NextVowel.SubMatches) { yield return match; }
-            }
-        }
+        private IEnumerable<Word> GetSubMatches(bool includePartial) {
+            if (includePartial || this.IsMatch) yield return this;
+            IEnumerable<Word> words = new List<Word>();
+            if (this.NextConsonant != null) words = 
+                words.Union(this.NextConsonant.GetSubMatches(includePartial));
+            if (this.NextVowel != null) words = 
+                words.Union(this.NextVowel.GetSubMatches(includePartial));
 
-        private IEnumerable<Word> GetSubPartialMatches() {
-            yield return this;
-            if (this.NextConsonant != null) {
-                foreach (var match in this.NextConsonant.SubPartialMatches) { yield return match; }
-            }
-            if (this.NextVowel != null) {
-                foreach (var match in this.NextVowel.SubPartialMatches) { yield return match; }
-            }
+            foreach (var word in words) { yield return word; }
         }
 
         public override string ToString() {

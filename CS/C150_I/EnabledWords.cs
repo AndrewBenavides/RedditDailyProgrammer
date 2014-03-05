@@ -6,9 +6,18 @@ using System.Threading.Tasks;
 
 namespace C150_I {
     public static class EnabledWords {
-        private static string[] _reverseEnabledWords = GetReversedArray();
         private static Dictionary<string, int> _frequency = GetFrequency();
-        private static char[] _vowels = GetVowels();
+        private static HashSet<string> _matches = new HashSet<string>(GetMatches());
+        private static HashSet<string> _partialMatches = new HashSet<string>(GetPartialMatches());
+        private static HashSet<char> _vowels = new HashSet<char>("aeiouAEIOU".ToCharArray());
+
+        private static IEnumerable<string> ReadLines(string path) {
+            using (var reader = new System.IO.StreamReader(path)) {
+                while (!reader.EndOfStream) {
+                    yield return reader.ReadLine();
+                }
+            }
+        }
 
         private static Dictionary<string, int> GetFrequency() {
             var dict = new Dictionary<string, int>();
@@ -19,33 +28,21 @@ namespace C150_I {
             return dict;
         }
 
-        private static string[] GetReversedArray() {
-            //http://stackoverflow.com/a/500930
-            return ReadLines(".\\enable1_rev.txt").ToArray();
+        private static IEnumerable<string> GetMatches() {
+            return ReadLines(".\\enable1.txt");
         }
 
-        private static IEnumerable<string> ReadLines(string path) {
-            using (var reader = new System.IO.StreamReader(path)) {
-                while (!reader.EndOfStream) {
-                    yield return reader.ReadLine();
+        private static IEnumerable<string> GetPartialMatches() {
+            foreach (var line in GetMatches()) {
+                for (int i = line.Length; i >= 0; --i) {
+                    var partial = line.Substring(i);
+                    yield return partial;
                 }
             }
         }
 
-        private static char[] GetVowels() {
-            var chars = "aeiouAEIOU".ToCharArray();
-            Array.Sort(chars);
-            return chars;
-        }
-
         public static bool Contains(string str) {
-            var rev = str.Reverse2();
-            var nearest = Array.BinarySearch(_reverseEnabledWords, rev);
-            if (nearest > -1 || _reverseEnabledWords[Math.Abs(nearest) - 1].Contains(rev)) {
-                return true;
-            } else {
-                return false;
-            }
+            return _partialMatches.Contains(str);
         }
 
         public static int Frequency(string str) {
@@ -53,13 +50,12 @@ namespace C150_I {
             var successful = _frequency.TryGetValue(str, out frequency);
             return frequency;
         }
-
-        public static bool Matches(string str) {
-            return Array.BinarySearch(_reverseEnabledWords, str.Reverse2()) > -1 ? true : false;
+        public static bool IsVowel(char c) {
+            return _vowels.Contains(c);
         }
 
-        public static bool IsVowel(char c) {
-            return Array.BinarySearch(_vowels, c) > -1 ? true : false;
+        public static bool Matches(string str) {
+            return _matches.Contains(str);
         }
     }
 }

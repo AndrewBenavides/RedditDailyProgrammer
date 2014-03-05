@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace C150_I {
     public static class Parser {
-        public static string GetMostRelevantPhrase(Phrase phrase) {
+        public static IEnumerable<string> GetMostRelevantPhrases(Phrase phrase, int take) {
             var phrases = phrase.SubSignificantPhrases.OrderByDescending(sp => sp.Words.Sum(w => w.Weight)).ToList();
-            var p = phrases.FirstOrDefault();
-            return p == null ? string.Empty : p.ToString();
+            if (phrases != null) {
+                return phrases.Take(take).Select(p => p.ToString());
+            } else {
+                return new List<string>();
+            }
         }
     }
 }
