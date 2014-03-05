@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace C150_I {
     class Reemvoweler {
@@ -13,23 +9,26 @@ namespace C150_I {
                 new Pairing("wwllfndffthstrds", "eieoeaeoi")
                 ,new Pairing("llfyrbsshvtsmpntbncnfrmdbyncdt","aoouiaeaeaoeoieeoieaeoe")
                 ,new Pairing("bbsrshpdlkftbllsndhvmrbndblbnsthndlts", "aieaeaeieooaaaeoeeaeoeaau")
-                //,new Pairing("thffcrrprtdthtblckdndcrfwhdbnrdrd", "eoieeoeaaoaeaaueaeeoee")
-                //,new Pairing("thdcryptntmsbltdtrmnthtthplnsrnddfrtypftrnsprt", "eeioeaiaeoeeieaeaaeieeoaeoao")
-                //,new Pairing("nfcthblvdthrwsnthrcncptytbyndhmnndrstndngdtthmrvlscmplxtyndthclckwrkprcsnfthnvrs", "iaeeieeeeaaoeoeeeouaueaiueoeaeouoeiaeooeiiooeuiee")
-                //,new Pairing("thhmrthpthsthtnsnvnthblmngsndtrckllcnsprtnsrthtthtlftngrtrvlngbckthrtyyrstnsrhsprntsmtndltmtlymtcngvntsvntgnwbfrlydscrbdsclssc", "euoeaoeeioeeeooiouaaoieoeueaeaeoaeeaeaeiaieaoeueiaeeeauiaeaeaieiiaeoeaieieaaai")
             };
-
             foreach (var pair in pairings) {
                 var stopwatch = new System.Diagnostics.Stopwatch();
                 stopwatch.Start();
-                
-                var results = Parser.GetMostRelevantPhrases(pair.GetPhrase(), take: 2);
+                var results = GetMostSignificantPhrases(pair.GetPhrase(), take: 2);
                 PrintResults(pair, results, stopwatch.Elapsed.TotalSeconds);
-                
                 stopwatch.Stop();
             }
-
             Console.ReadLine();
+        }
+
+        public static IEnumerable<string> GetMostSignificantPhrases(Phrase phrase, int take) {
+            var phrases = phrase.SubSignificantPhrases
+                .OrderByDescending(p => p.Words.Sum(w => w.Weight))
+                .ToList();
+            if (phrases != null) {
+                return phrases.Take(take).Select(p => p.ToString());
+            } else {
+                return new List<string>();
+            }
         }
 
         private static void PrintResults(Pairing pair, IEnumerable<string> results, double seconds) {

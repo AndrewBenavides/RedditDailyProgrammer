@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace C150_I {
     public class Word {
@@ -11,10 +9,10 @@ namespace C150_I {
         public int Frequency {
             get { return EnabledWords.Frequency(_word); }
         }
-        public bool IsPartialMatch {
+        public bool IsPartial {
             get { return EnabledWords.Contains(_word); }
         }
-        public bool IsMatch {
+        public bool IsComplete {
             get { return EnabledWords.Matches(_word); }
         }
         public int Length { get; private set; }
@@ -26,11 +24,11 @@ namespace C150_I {
         }
         public IList<char> RemainingConsonants { get; private set; }
         public IList<char> RemainingVowels { get; private set; }
-        public IEnumerable<Word> SubMatches {
-            get { return GetSubMatches(includePartial: false); }
-        }
-        public IEnumerable<Word> SubPartialMatches {
+        public IEnumerable<Word> SubPartialWords {
             get { return GetSubMatches(includePartial: true); }
+        }
+        public IEnumerable<Word> SubWords {
+            get { return GetSubMatches(includePartial: false); }
         }
         public double Weight {
             get { return CalculateWeight(_word); }
@@ -50,7 +48,7 @@ namespace C150_I {
         }
 
         private Word GetNextWordWith(IList<char> chars) {
-            if (chars.Count > 0 && this.IsPartialMatch) {
+            if (chars.Count > 0 && this.IsPartial) {
                 var c = chars[0];
                 var word = c + _word;
                 IList<char> consonants;
@@ -70,7 +68,7 @@ namespace C150_I {
         }
 
         private IEnumerable<Word> GetSubMatches(bool includePartial) {
-            if (includePartial || this.IsMatch) yield return this;
+            if (includePartial || this.IsComplete) yield return this;
             IEnumerable<Word> words = new List<Word>();
             if (this.NextConsonant != null) words = 
                 words.Union(this.NextConsonant.GetSubMatches(includePartial));

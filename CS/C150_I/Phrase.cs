@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace C150_I {
     public class Phrase {
         public bool IsComplete { get; private set; }
         public bool IsDeadEnd { get; private set; }
-
         public IEnumerable<Phrase> NextPhrases {
             get { return GetNextPhrases(); }
         }
@@ -46,16 +42,6 @@ namespace C150_I {
                 (RemainingConsonants.Count == 0 && RemainingVowels.Count == 0) ? true : false;
         }
 
-        private List<Word> GetNextWords() {
-            var words = new List<Word>();
-            if (!this.IsComplete) {
-                var word = new Word("", this.RemainingConsonants, this.RemainingVowels);
-                words = word.SubMatches.ToList();
-                if (words.Count == 0) this.IsDeadEnd = true;
-            }
-            return words;
-        }
-
         private IEnumerable<Phrase> GetNextPhrases() {
             IEnumerable<Phrase> phrases = new List<Phrase>();
             var words = GetNextWords();
@@ -78,13 +64,26 @@ namespace C150_I {
                 var targetLength = words.Max(w => w.Length) - 1;
                 //length floor can be adjusted here, but will greatly increase processing time
                 var longestWords = words
-                    .Where(w => (w.Length >= targetLength) && (w.Weight > targetWeight * 0.33) && (w.Weight < targetWeight))
+                    .Where(w => 
+                        (w.Length >= targetLength) 
+                        && (w.Weight > targetWeight * 0.33) 
+                        && (w.Weight < targetWeight))
                     .OrderByDescending(w => w.Weight)
                     .Take(2);
                 var longestPhrases = GeneratePhrases(longestWords);
                 phrases = significantPhrases.Union(longestPhrases);
             }
             return phrases;
+        }
+
+        private List<Word> GetNextWords() {
+            var words = new List<Word>();
+            if (!this.IsComplete) {
+                var word = new Word("", this.RemainingConsonants, this.RemainingVowels);
+                words = word.SubWords.ToList();
+                if (words.Count == 0) this.IsDeadEnd = true;
+            }
+            return words;
         }
 
         private IEnumerable<Phrase> GeneratePhrases(IEnumerable<Word> filteredMatches) {

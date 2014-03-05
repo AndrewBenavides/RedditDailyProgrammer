@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Parser.cs" />
     <Compile Include="EnabledWords.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Phrase.cs" />
