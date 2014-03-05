@@ -19,13 +19,13 @@ namespace C150_I {
         }
         public int Length { get; private set; }
         public Word NextConsonant {
-            get { return GetNextWordWith(this.RemainingConsonants.Clone()); }
+            get { return GetNextWordWith(this.RemainingConsonants); }
         }
         public Word NextVowel {
-            get { return GetNextWordWith(this.RemainingVowels.Clone()); }
+            get { return GetNextWordWith(this.RemainingVowels); }
         }
-        public Stack<char> RemainingConsonants { get; private set; }
-        public Stack<char> RemainingVowels { get; private set; }
+        public IList<char> RemainingConsonants { get; private set; }
+        public IList<char> RemainingVowels { get; private set; }
         public IEnumerable<Word> SubMatches {
             get { return GetSubMatches(includePartial: false); }
         }
@@ -36,7 +36,7 @@ namespace C150_I {
             get { return CalculateWeight(_word); }
         }
 
-        public Word(string word, Stack<char> remainingConsonants, Stack<char> remainingVowels) {
+        public Word(string word, IList<char> remainingConsonants, IList<char> remainingVowels) {
             _word = word;
             this.Length = word.Length;
             this.RemainingConsonants = remainingConsonants;
@@ -49,16 +49,20 @@ namespace C150_I {
             return weight;
         }
 
-        private Word GetNextWordWith(Stack<char> charStack) {
-            if (charStack.Count > 0 && this.IsPartialMatch) {
-                var c = charStack.Pop();
+        private Word GetNextWordWith(IList<char> chars) {
+            if (chars.Count > 0 && this.IsPartialMatch) {
+                var c = chars[0];
                 var word = c + _word;
-                Word next;
+                IList<char> consonants;
+                IList<char> vowels;
                 if (EnabledWords.IsVowel(c)) {
-                    next = new Word(word, this.RemainingConsonants.Clone(), charStack);
+                    consonants = this.RemainingConsonants;
+                    vowels = chars.Skip(1).ToList();
                 } else {
-                    next = new Word(word, charStack, this.RemainingVowels.Clone());
+                    consonants = chars.Skip(1).ToList();
+                    vowels = this.RemainingVowels;
                 }
+                Word next = new Word(word, consonants, vowels);
                 return next;
             } else {
                 return null;

@@ -14,7 +14,8 @@ namespace C150_I {
             var clone = stack.Clone();
             var output = new StringBuilder();
             foreach (var word in clone) {
-                output.Append(" " + word.ToString());
+                output.Append(" ");
+                output.Append(word.ToString());
             }
             return output.ToString().Trim();
         }

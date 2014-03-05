@@ -15,8 +15,8 @@ namespace C150_I {
         public IEnumerable<Phrase> NextSignificantPhrases {
             get { return GetNextSignificantPhrases(); }
         }
-        public Stack<char> RemainingConsonants { get; private set; }
-        public Stack<char> RemainingVowels { get; private set; }
+        public IList<char> RemainingConsonants { get; private set; }
+        public IList<char> RemainingVowels { get; private set; }
         public IEnumerable<Phrase> SubPartialPhrases {
             get { return GetSubPhrases(includePartial: true); }
         }
@@ -29,14 +29,16 @@ namespace C150_I {
         public Stack<Word> Words { get; private set; }
 
         public Phrase(string consonants, string vowels) {
-            Construct(new Stack<Word>(), new Stack<char>(consonants), new Stack<char>(vowels));
+            var revCons = consonants.Reverse().ToList();
+            var revVows = vowels.Reverse().ToList();
+            Construct(new Stack<Word>(), revCons, revVows);
         }
 
-        private Phrase(Stack<Word> words, Stack<char> consonants, Stack<char> vowels) {
+        private Phrase(Stack<Word> words, IList<char> consonants, IList<char> vowels) {
             Construct(words, consonants, vowels);
         }
 
-        private void Construct(Stack<Word> words, Stack<char> consonants, Stack<char> vowels) {
+        private void Construct(Stack<Word> words, IList<char> consonants, IList<char> vowels) {
             this.RemainingConsonants = consonants;
             this.RemainingVowels = vowels;
             this.Words = words;
@@ -44,7 +46,7 @@ namespace C150_I {
                 (RemainingConsonants.Count == 0 && RemainingVowels.Count == 0) ? true : false;
         }
 
-        private IList<Word> GetNextWords() {
+        private List<Word> GetNextWords() {
             var words = new List<Word>();
             if (!this.IsComplete) {
                 var word = new Word("", this.RemainingConsonants, this.RemainingVowels);
@@ -76,7 +78,7 @@ namespace C150_I {
                 var targetLength = words.Max(w => w.Length) - 1;
                 //length floor can be adjusted here, but will greatly increase processing time
                 var longestWords = words
-                    .Where(w => (w.Length >= targetLength) && (w.Weight < targetWeight))
+                    .Where(w => (w.Length >= targetLength) && (w.Weight > targetWeight * 0.33) && (w.Weight < targetWeight))
                     .OrderByDescending(w => w.Weight)
                     .Take(2);
                 var longestPhrases = GeneratePhrases(longestWords);
@@ -91,8 +93,8 @@ namespace C150_I {
                 words.Push(match);
                 var phrase = new Phrase(
                     words
-                    , match.RemainingConsonants.Clone()
-                    , match.RemainingVowels.Clone());
+                    , match.RemainingConsonants
+                    , match.RemainingVowels);
                 yield return phrase;
             }
         }
