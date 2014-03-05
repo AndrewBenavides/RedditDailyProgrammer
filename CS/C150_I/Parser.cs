@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace C150_I {
     public static class Parser {
         public static string GetMostRelevantPhrase(Phrase phrase) {
-            var phrases = phrase.SubPhrases.OrderByDescending(sp => sp.Words.Sum(w => w.Weight)).ToList();
+            var phrases = phrase.SubSignificantPhrases.OrderByDescending(sp => sp.Words.Sum(w => w.Weight)).ToList();
             var p = phrases.FirstOrDefault();
             return p == null ? string.Empty : p.ToString();
         }
