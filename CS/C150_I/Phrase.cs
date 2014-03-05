@@ -9,18 +9,22 @@ namespace C150_I {
         public bool IsComplete { get; private set; }
         public bool IsDeadEnd { get; private set; }
 
-        public IEnumerable<Phrase> NextPhrases { get { return GetNextPhrases(); } }
+        public IEnumerable<Phrase> NextPhrases { get { return GetSignificantPhrases(); } }
         public Stack<char> RemainingConsonants { get; private set; }
         public Stack<char> RemainingVowels { get; private set; }
-        public IEnumerable<Phrase> SubPartialPhrases { get { return GetSubPartialPhrases(); } }
-        public IEnumerable<Phrase> SubPhrases { get { return GetSubPhrases(); } }
+        public IEnumerable<Phrase> SubPartialPhrases {
+            get { return GetSubPhrases(includePartial: true); }
+        }
+        public IEnumerable<Phrase> SubPhrases {
+            get { return GetSubPhrases(includePartial: false); }
+        }
         public Stack<Word> Words { get; private set; }
 
         public Phrase(string consonants, string vowels) {
             Construct(new Stack<Word>(), new Stack<char>(consonants), new Stack<char>(vowels));
         }
 
-        public Phrase(Stack<Word> words, Stack<char> consonants, Stack<char> vowels) {
+        private Phrase(Stack<Word> words, Stack<char> consonants, Stack<char> vowels) {
             Construct(words, consonants, vowels);
         }
 
@@ -28,53 +32,71 @@ namespace C150_I {
             this.RemainingConsonants = consonants;
             this.RemainingVowels = vowels;
             this.Words = words;
-            this.IsComplete = (RemainingConsonants.Count == 0 && RemainingVowels.Count == 0) ? true : false;
+            this.IsComplete =
+                (RemainingConsonants.Count == 0 && RemainingVowels.Count == 0) ? true : false;
         }
 
         public IEnumerable<Phrase> GetNextPhrases() {
-            var nextPhrases = new List<Phrase>();
+            IEnumerable<Phrase> phrases = new List<Phrase>();
             if (!this.IsComplete) {
                 var word = new Word("", this.RemainingConsonants, this.RemainingVowels);
                 var submatches = word.SubMatches.ToList();
-                if (!submatches.Any()) {
+                if (submatches.Count == 0) {
                     this.IsDeadEnd = true;
                 } else {
-                    var mostSignificant = submatches.Max(m => m.Weight);
-                    var mostSignificantMatches = submatches.Where(m => m.Weight == mostSignificant).ToList();
-                    foreach (var match in mostSignificantMatches) {
-                        var words = this.Words.Clone();
-                        words.Push(match);
-                        var next = new Phrase(words, match.RemainingConsonants.Clone(), match.RemainingVowels.Clone());
-                        nextPhrases.Add(next);
-                    }
-
-                    var longest = submatches.Max(m => m.Length);
-                    var longestMatches = submatches
-                        .Where(m => (m.Length >= longest - 1) && (!mostSignificantMatches.Contains(m)))
-                        .OrderByDescending(m => m.Weight)
-                        .Take(2);
-                    foreach (var match in longestMatches) {
-                        var words = this.Words.Clone();
-                        words.Push(match);
-                        var next = new Phrase(words, match.RemainingConsonants.Clone(), match.RemainingVowels.Clone());
-                        nextPhrases.Add(next);
-                    }
+                    phrases = GetPhrases(submatches);
                 }
             }
-            return nextPhrases;
+            return phrases;
         }
 
-        public IEnumerable<Phrase> GetSubPartialPhrases() {
-            yield return this;
-            foreach (var phrase in this.NextPhrases) {
-                foreach (var subphrase in phrase.SubPartialPhrases) {
-                    yield return subphrase;
+        public IEnumerable<Phrase> GetSignificantPhrases() {
+            IEnumerable<Phrase> phrases = new List<Phrase>();
+            if (!this.IsComplete) {
+                var word = new Word("", this.RemainingConsonants, this.RemainingVowels);
+                var submatches = word.SubMatches.ToList();
+                if (submatches.Count == 0) {
+                    this.IsDeadEnd = true;
+                } else {
+                    var mostSignificantWeight = submatches.Max(m => m.Weight);
+                    var significantMatches = submatches
+                        .Where(m => m.Weight == mostSignificantWeight)
+                        .ToList();
+                    var significantPhrases = GetPhrases(significantMatches);
+                    var longestPhrases = GetLongestNonSignificantPhrases(submatches, significantMatches);
+                    phrases = significantPhrases.Union(longestPhrases);
                 }
+            }
+            return phrases;
+        }
+
+        private IEnumerable<Phrase> GetPhrases(List<Word> submatches) {
+            foreach (var match in submatches) {
+                var words = this.Words.Clone();
+                words.Push(match);
+                var phrase = new Phrase(
+                    words
+                    , match.RemainingConsonants.Clone()
+                    , match.RemainingVowels.Clone());
+                yield return phrase;
             }
         }
 
-        public IEnumerable<Phrase> GetSubPhrases() {
-            if (this.IsComplete) yield return this;
+        private IEnumerable<Phrase> GetLongestNonSignificantPhrases(
+            List<Word> submatches
+            , List<Word> matchesToExclude) {
+                var longest = submatches.Max(m => m.Length);
+                var longestMatches = submatches
+                    .Where(m => (m.Length >= longest - 1) && (!matchesToExclude.Contains(m)))
+                    .OrderByDescending(m => m.Weight)
+                    .Take(2)
+                    .ToList();
+                var phrases = GetPhrases(longestMatches);
+                return phrases;
+            }
+
+        private IEnumerable<Phrase> GetSubPhrases(bool includePartial) {
+            if (includePartial || this.IsComplete) yield return this;
             foreach (var phrase in this.NextPhrases) {
                 foreach (var subphrase in phrase.SubPhrases) {
                     yield return subphrase;
