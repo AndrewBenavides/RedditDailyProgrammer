@@ -56,7 +56,9 @@
   <ItemGroup>
     <Compile Include="OrderedVowels.fs" />
     <None Include="App.config" />
-    <Content Include="enable1.txt" />
+    <Content Include="enable1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
