@@ -4,35 +4,17 @@ let IsInvalidScore score =
     (score >= 0) && (List.exists ((=) score) [1;2;4;5;])
 
 let FindCombinations score =
-    let rec findPoints remainingPoints scoreSet (combinations: List<int>) =
-        match scoreSet with
-        | [] -> 
-            //All available legalScores have been removed the scoreSet in an attempt to
-            //"make change": there is no solution.
-            None
-        | _ when remainingPoints > 0 ->
-            let invalid, valid = List.partition (fun i -> i > remainingPoints) scoreSet
-            if List.isEmpty valid && remainingPoints > 0 then
-                //"Rollback" last iteration and remove highest score to prevent re-running it
-                let highest = List.max invalid
-                findPoints (remainingPoints + highest) scoreSet.Tail combinations.Tail
-            else
-                let highest = List.max valid
-                findPoints (remainingPoints - highest) scoreSet (highest :: combinations)
-        | _ -> Some(List.rev combinations)
-        
-    let rec collectionCombinations points scoreSet combinations =
-        match scoreSet with
-        | _ :: remainingScoreSet -> 
-            let collected = 
-                match (findPoints points scoreSet []) with
-                | Some combo -> combo :: combinations
-                | None -> combinations
-            collectionCombinations points remainingScoreSet collected
-        | [] -> List.rev combinations
-
-    collectionCombinations score legalScores []
-
+    let rec findPoints remainingPoints (currentChain: List<int>) (combinations: List<List<int>>) =
+        match remainingPoints with
+        | _ when remainingPoints < 0 -> []
+        | _ when remainingPoints = 0 -> currentChain :: combinations
+        | _ ->
+            List.collect (fun score -> 
+                findPoints (remainingPoints - score) (score :: currentChain) (combinations)
+                ) legalScores
+            |> List.filter (fun lst -> not (List.isEmpty lst))
+    findPoints score [] []
+ 
 let PrintCombinations score =
     List.iteri (fun index points -> 
         printf "%i. " (index + 1)
