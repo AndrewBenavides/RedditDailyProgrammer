@@ -1,36 +1,44 @@
-﻿let scores = [8;7;6;3;] //No safeties.
+﻿let legalScores = [8;7;6;3;] //No safeties.
 
 let IsInvalidScore score =
     (score >= 0) && (List.exists ((=) score) [1;2;4;5;])
 
-let FindCombinations score = 
-    let rec find remaining allowed (accumulated: List<int>)=
-        if List.isEmpty allowed then
-            []
-        elif remaining > 0 then
-            let invalid, valid = List.partition (fun i -> i > remaining) allowed
-            if (List.length valid = 0 && remaining > 0) then
+let FindCombinations score =
+    let rec findPoints remainingPoints scoreSet (combinations: List<int>) =
+        match scoreSet with
+        | [] -> 
+            //All available legalScores have been removed the scoreSet in an attempt to
+            //"make change": there is no solution.
+            None
+        | _ when remainingPoints > 0 ->
+            let invalid, valid = List.partition (fun i -> i > remainingPoints) scoreSet
+            if List.isEmpty valid && remainingPoints > 0 then
+                //"Rollback" last iteration and remove highest score to prevent re-running it
                 let highest = List.max invalid
-                find (remaining + highest) allowed.Tail accumulated.Tail
+                findPoints (remainingPoints + highest) scoreSet.Tail combinations.Tail
             else
-                let amount = List.max valid
-                let next = amount :: accumulated
-                find (remaining - amount) allowed next
-        else
-            List.rev accumulated
-    let rec reduce lst acc =
-        match lst with
-        | _ :: tl -> reduce tl ((find score lst []) :: acc)
-        | [] -> List.filter (fun (lst : List<int>) -> lst.Length > 0) (List.rev acc)
+                let highest = List.max valid
+                findPoints (remainingPoints - highest) scoreSet (highest :: combinations)
+        | _ -> Some(List.rev combinations)
+        
+    let rec collectionCombinations points scoreSet combinations =
+        match scoreSet with
+        | _ :: remainingScoreSet -> 
+            let collected = 
+                match (findPoints points scoreSet []) with
+                | Some combo -> combo :: combinations
+                | None -> combinations
+            collectionCombinations points remainingScoreSet collected
+        | [] -> List.rev combinations
 
-    reduce scores []
+    collectionCombinations score legalScores []
 
 let PrintCombinations score =
-    List.iteri (fun index scores -> 
+    List.iteri (fun index points -> 
         printf "%i. " (index + 1)
         List.iter (fun point -> 
             printf "%d " point
-        ) scores
+        ) points
         printfn ""
     ) (FindCombinations score)
 
