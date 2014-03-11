@@ -28,9 +28,9 @@ let Process score =
     if IsInvalidScore score then
         printfn "Score %i is invalid." score
     else
-        printfn "Score %i is valid. Possible combinations:" score
+        printf "\nPossible combinations:\n"
         PrintCombinations score
-        printfn ""
+        printf "\nScore %i is valid.\n\n" score
 
 [<EntryPoint>]
 let main argv = 
