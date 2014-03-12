@@ -1,4 +1,4 @@
-# Sport Points
+# [Sport Points](http://www.reddit.com/r/dailyprogrammer/comments/1undyd/010714_challenge_147_easy_sport_points/)
 
 You must write code that verifies the awarded points for a fictional sport are valid. This sport is a simplification of [American Football](http://en.wikipedia.org/wiki/American_football#Scoring) scoring rules. This means that the score values must be any logical combination of the following four rewards:
 
@@ -36,3 +36,5 @@ Print "Valid Score" or "Invalid Score" based on the respective validity of the g
 ### Sample Output 2
 
     Invalid Score
+
+[Source](http://www.reddit.com/r/dailyprogrammer/comments/1undyd/010714_challenge_147_easy_sport_points/)
