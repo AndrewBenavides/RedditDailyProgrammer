@@ -11,7 +11,7 @@
     <h1>[C146_E] Polygon Perimeter</h1>
 
     <div id="content">
-        <form name="polygonForm" action="" method="get">
+        <form name="polygonForm" action="" method="get" onsubmit="return false;">
             <fieldset>
                 <legend>Form</legend>
                 <label for="sides">Number of sides:</label>
@@ -22,8 +22,7 @@
                 <br />
                 <input type="submit" value="Calculate" onclick="processForm(this.form)"/>
                 <br />
-                <p>Perimeter: </p>
-                <output for="sides length" id="perimeter" name="perimeter"></output>
+                Perimeter: <span id="perimeter"></span>
             </fieldset>
         </form>
     </div>

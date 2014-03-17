@@ -7,12 +7,12 @@
 
 function getValueAsNumber(id: string) {
     var element = <HTMLInputElement>document.getElementById(id);
-    var value = element.valueAsNumber;
+    var value = parseFloat(element.value);
     return value;
 }
 
 function setPerimeter(value: number) {
-    document.getElementById("perimeter").nodeValue = value.toString();
+    document.getElementById("perimeter").innerHTML = value.toString();
 }
 
 function calculatePermiter(sides: number, length: number): number {
