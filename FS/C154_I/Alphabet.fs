@@ -12,8 +12,8 @@ let weight (c: char) (alphabet: List<char * int>) =
 
 let rec sorter a b alphabet =
     let weightOf c = weight c alphabet
-    if a = [] then 1
-    elif b = [] then -1
+    if a = [] then -1
+    elif b = [] then 1
     else
         let wa = weightOf (List.head a)
         let wb = weightOf (List.head b)
@@ -23,6 +23,10 @@ let rec sorter a b alphabet =
 
 let sort a b alphabet =
     sorter (List.ofSeq a) (List.ofSeq b) alphabet
+
+let sortwords words alphabet =
+    let isort a b =  sort a b alphabet
+    List.sortWith isort words
 
 [<EntryPoint>]
 let main argv = 
@@ -37,5 +41,5 @@ let main argv =
         "WHATEVER";
         "ZONE";
         ]
-    let s = sort "ZONE" "WHATEVER" a
+    let sorted = sortwords words a
     0 // return an integer exit code
