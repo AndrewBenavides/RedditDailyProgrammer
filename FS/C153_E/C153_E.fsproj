@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Pascal.fs" />
     <None Include="App.config" />
+    <None Include="README.md" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
