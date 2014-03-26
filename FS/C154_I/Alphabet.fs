@@ -1,22 +1,19 @@
 ﻿let checkMissing alphabet =
-    let complete = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-//    let rec check alphabet missing extra =
-//        match alphabet with
-//        | [] -> missing, extra
-//        | hd :: tl when List.exists(fun c -> c = hd) tl -> check tl missing c::extra
-//        | hd :: tl when not List.exists(fun c -> c = hd) complete
-    let extra =
-        let alphabet = "UUVWXYZNOPQRSTHIJKLMABCDEFG"
-        let complete = List.ofSeq "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        let aseq = 
-            Seq.groupBy (fun c-> 
-                List.findIndex(fun a -> a = c) complete
-            ) alphabet
-        for s in aseq do 
-            printf "%i " (fst s)
-            for c in (snd s) do
-                printf "%c " c
-            printfn ""
+    let alphabet = List.ofSeq "UUVVWXYZNOPQRSTHIJKLMABCDE" //FG
+    let complete = List.ofSeq "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    let rec check remaining extra missing =
+        if remaining = [] then (List.sort extra), (List.sort missing)
+        else
+            let current = List.head remaining
+            let cur, rem = List.partition (fun c -> c = current) alphabet
+            match cur.Length with
+            | 0 -> check remaining.Tail extra (current::missing)
+            | 1 -> check remaining.Tail extra missing
+            | _ -> check remaining.Tail (current::extra) missing
+    let extra, missing = check complete [] []
+    printf "Extra: "; List.iter (printf "%A ") extra; printfn "";
+    printf "Missing: "; List.iter (printf "%A ") missing; printfn "";
+    
 
 let alphabet (str: string) =
     List.mapi (fun i c -> 
