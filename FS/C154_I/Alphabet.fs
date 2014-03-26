@@ -1,7 +1,27 @@
-﻿let alphabet (str: string) =
+﻿let checkMissing alphabet =
+    let complete = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+//    let rec check alphabet missing extra =
+//        match alphabet with
+//        | [] -> missing, extra
+//        | hd :: tl when List.exists(fun c -> c = hd) tl -> check tl missing c::extra
+//        | hd :: tl when not List.exists(fun c -> c = hd) complete
+    let extra =
+        let alphabet = "UUVWXYZNOPQRSTHIJKLMABCDEFG"
+        let complete = List.ofSeq "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        let aseq = 
+            Seq.groupBy (fun c-> 
+                List.findIndex(fun a -> a = c) complete
+            ) alphabet
+        for s in aseq do 
+            printf "%i " (fst s)
+            for c in (snd s) do
+                printf "%c " c
+            printfn ""
+
+let alphabet (str: string) =
     List.mapi (fun i c -> 
         (c, i)
-    ) (List.ofSeq str)
+    ) (List.ofSeq (str.ToUpper()))
 
 let weight (c: char) (alphabet: List<char * int>) =
     List.pick (fun pairs -> 
@@ -21,7 +41,9 @@ let rec sorter a b alphabet =
         elif wa < wb then -1
         else sorter a.Tail b.Tail alphabet
 
-let sort a b alphabet =
+let sort (a: string) (b: string) alphabet =
+    let a = a.ToUpper()
+    let b = b.ToUpper()
     sorter (List.ofSeq a) (List.ofSeq b) alphabet
 
 let sortwords words alphabet =
@@ -42,4 +64,14 @@ let main argv =
         "ZONE";
         ]
     let sorted = sortwords words a
+    
+    let a2 = alphabet "ZYXWVuTSRQpONMLkJIHGFEDCBa"
+    let words2 = [
+        "go";
+        "aLL";
+        "ACM";
+        "teamS";
+        "Go";
+    ]
+    let sorted2 = sortwords words2 a2
     0 // return an integer exit code
