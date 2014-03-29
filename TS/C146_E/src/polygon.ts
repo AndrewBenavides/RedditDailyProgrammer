@@ -3,6 +3,7 @@
     var length = getValueAsNumber("length");
     var perimeter = calculatePermiter(sides, length);
     setPerimeter(perimeter);
+    drawPolygon(sides, length);
 }
 
 function getValueAsNumber(id: string) {
@@ -18,4 +19,22 @@ function setPerimeter(value: number) {
 function calculatePermiter(sides: number, length: number): number {
     var perimeter = sides * length;
     return perimeter;
+}
+
+function drawPolygon(sides: number, length: number) {
+    var canvas = <HTMLCanvasElement>document.getElementById("polygon");
+    var context = canvas.getContext("2d");
+    var xCenter = length + 20;
+    var yCenter = length + 20;
+
+    context.beginPath();
+    context.moveTo(xCenter + length * Math.cos(0), yCenter + length * Math.sin(0));
+
+    for (var i = 1; i <= sides; i++) {
+        context.lineTo(xCenter + length * Math.cos(i * 2 * Math.PI / sides), yCenter + length * Math.sin(i * 2 * Math.PI / sides))
+    }
+
+    context.strokeStyle = "#000000";
+    context.lineWidth = 1;
+    context.stroke();
 }
