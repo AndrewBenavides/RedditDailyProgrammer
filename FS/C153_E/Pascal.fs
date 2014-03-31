@@ -38,9 +38,11 @@ let printLayer n =
             let z = (n - y) - x
             (x, y, z)
         calc n x y z
-    let width = highestValue.ToString().Length + 1
+    let width = highestValue.ToString().Length
     List.iter (fun layer ->
-        List.iter (fun cell -> printf "%*s" width (cell.ToString())) layer
+        let precount = (n + 1) - List.length layer
+        printf "%*s" (precount * width) ""
+        List.iter (fun cell -> printf "%*s" (width * 2) (cell.ToString())) layer
         printfn ""
     ) (calcLayer n)
 
