@@ -37,8 +37,18 @@ let printLayer n =
         printfn ""
     ) layer
 
+let rec promptInput() = 
+    printf "Input layer of Pascal's Pyramid to solve for: "
+    let success, n = System.Int32.TryParse(System.Console.ReadLine())
+    if success then
+        printfn ""; printLayer n; printfn "";
+        printfn "Solution complete, press enter to exit."
+        System.Console.ReadLine() |> ignore
+    else
+        printfn "Invalid input. Try again."
+        promptInput()
+
 [<EntryPoint>]
 let main argv = 
-    printLayer 11
-    System.Console.ReadLine() |> ignore
+    promptInput()
     0 // return an integer exit code
