@@ -1,33 +1,24 @@
-﻿open System.Collections.Generic
-open Microsoft.FSharp.Math
-
-let factorials = new Dictionary<int, bigint>();
+﻿let factorials = new System.Collections.Generic.Dictionary<int, bigint>();
 
 let factorial (i: int) =
-    let factorial n = Seq.fold (*) 1I [1I .. n]
-    if factorials.ContainsKey i then factorials.[i]
-    else
-        let fact = factorial (bigint i)
+    let success, value = factorials.TryGetValue(i)
+    if success then value else
+        let fact = Seq.fold (*) 1I [1I .. bigint(i)] 
         factorials.Add(i, fact)
         fact
 
 let calc n x y z = 
-    let fn = factorial n
-    let fx = factorial x
-    let fy = factorial y
-    let fz = factorial z
-    fn / (fx * fy * fz)
+    factorial(n) / (factorial(x) * factorial(y) * factorial(z))
 
-let calcCell n x y =
-    calc n (n - x - y) y x
+let calcCell n row col =
+    calc n (n - row - col) row col
 
 let calcRow n len =
-    List.init len (fun i -> calcCell n i (n - (len - 1)))
+    let y = (n + 1) - len
+    List.init len (calcCell n y)
 
 let calcLayer n =
-    List.map (fun l -> 
-        calcRow n l
-    ) [1 .. (n + 1)]
+    List.map (calcRow n) [1 .. (n + 1)]
 
 let printLayer n =
     let layer = calcLayer n
