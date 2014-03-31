@@ -44,7 +44,7 @@ let printLayer n =
         printf "%*s" (precount * width) ""
         List.iter (fun cell -> printf "%*s" (width * 2) (cell.ToString())) layer
         printfn ""
-    ) (calcLayer n)
+    ) layer
 
 [<EntryPoint>]
 let main argv = 
