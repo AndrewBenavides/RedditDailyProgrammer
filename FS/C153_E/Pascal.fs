@@ -20,22 +20,27 @@ let calcRow n len =
 let calcLayer n =
     List.map (calcRow n) [1 .. (n + 1)]
 
+let printCell width value =
+    let str = value.ToString()
+    printf "%*s" (width * 2) str
+
+let printRow n width row =
+    let precount = (n + 1) - List.length row
+    printf "%*s" (precount * width) ""
+    List.iter (printCell width) row
+    printfn ""
+
 let printLayer n =
     let layer = calcLayer n
-    let highestValue =
+    let width =
         let x, y, z =
             let y = n / 3
             let x = (n - y) / 2
             let z = (n - y) - x
             (x, y, z)
-        calc n x y z
-    let width = highestValue.ToString().Length
-    List.iter (fun layer ->
-        let precount = (n + 1) - List.length layer
-        printf "%*s" (precount * width) ""
-        List.iter (fun cell -> printf "%*s" (width * 2) (cell.ToString())) layer
-        printfn ""
-    ) layer
+        let max = calc n x y z
+        max.ToString().Length
+    List.iter (printRow n width) layer
 
 let rec promptInput() = 
     printf "Input layer of Pascal's Pyramid to solve for: "
