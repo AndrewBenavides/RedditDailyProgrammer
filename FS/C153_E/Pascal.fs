@@ -20,6 +20,14 @@ let calcRow n len =
 let calcLayer n =
     List.map (calcRow n) [1 .. (n + 1)]
 
+let calcHighest n =
+    let x, y, z =
+        let y = n / 3
+        let x = (n - y) / 2
+        let z = (n - y) - x
+        (x, y, z)
+    calc n x y z
+
 let printCell width value =
     let str = value.ToString()
     printf "%*s" (width * 2) str
@@ -32,14 +40,7 @@ let printRow n width row =
 
 let printLayer n =
     let layer = calcLayer n
-    let width =
-        let x, y, z =
-            let y = n / 3
-            let x = (n - y) / 2
-            let z = (n - y) - x
-            (x, y, z)
-        let max = calc n x y z
-        max.ToString().Length
+    let width = (calcHighest n).ToString().Length
     List.iter (printRow n width) layer
 
 let rec promptInput() = 
