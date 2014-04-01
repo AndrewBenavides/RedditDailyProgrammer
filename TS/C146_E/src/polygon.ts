@@ -26,6 +26,8 @@ function drawPolygon(sides: number, length: number) {
     var context = canvas.getContext("2d");
     var xCenter = length + 20;
     var yCenter = length + 20;
+    canvas.width = xCenter * 2;
+    canvas.height = yCenter * 2;
 
     context.beginPath();
     context.moveTo(xCenter + length * Math.cos(0), yCenter + length * Math.sin(0));
