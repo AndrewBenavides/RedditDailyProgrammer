@@ -8,6 +8,9 @@ wiki/
 TS/*/src/*.js
 TS/*/src/*.js.map
 
+#Ignore Scripts folder, populated by NuGet repositories
+TS/*/Scripts/*
+
 # User-specific files
 *.suo
 *.user
