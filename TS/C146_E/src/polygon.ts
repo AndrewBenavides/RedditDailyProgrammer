@@ -1,4 +1,7 @@
-﻿function processForm(form: HTMLFormElement) {
+﻿/// <reference path="../Scripts/typings/jquery/jquery.d.ts" />
+
+function processForm(e) {
+    e.preventDefault();
     var sides = getValueAsNumber("sides");
     var length = getValueAsNumber("length");
     var perimeter = calculatePermiter(sides, length);
@@ -50,3 +53,7 @@ function drawPolygon(sides: number, length: number) {
     context.lineWidth = 1;
     context.stroke();
 }
+
+$(document).ready(function () {
+    $("#polygonForm").submit(processForm);
+});
