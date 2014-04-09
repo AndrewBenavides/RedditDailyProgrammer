@@ -13,24 +13,28 @@
     <script src="polygon.js"></script>
 </head>
 <body class="metro">
-    <h1>[C146_E] Polygon Perimeter</h1>
-
-    <div id="content">
-        <form id="polygonForm">
-            <fieldset>
-                <legend>Form</legend>
-                <label for="sides">Number of sides:</label>
-                <input id="sides" type="number" name="sides" />
-                <br />
-                <label for="length">Length of sides:</label>
-                <input id="length" type="number" name="length" />
-                <br />
-                <input type="submit" value="Calculate" />
-                <br />
-                Perimeter: <span id="perimeter"></span>
-            </fieldset>
-        </form>
+    <div class="container">
+        <h1>[C146_E] Polygon Perimeter</h1>
+        <div id="content">
+            <form id="polygonForm">
+                <fieldset>
+                    <legend>Polygon Parameters</legend>
+                    <label for="sides">Number of sides:</label>
+                    <div class="input-control text">
+                        <input id="sides" type="number" name="sides" />
+                    </div>
+                    <label for="length">Length of sides:</label>
+                    <div class="input-control text">
+                        <input id="length" type="number" name="length" />
+                    </div>
+                    <input class="button large" type="submit" value="Calculate" />
+                </fieldset>
+            </form>
+        </div>
+        <div id="polygonContainer">
+            <h2>Perimeter: <span id="perimeter"></span></h2>
+            <canvas id="polygon" />
+        </div>
     </div>
-    <canvas id="polygon" />
 </body>
 </html>
