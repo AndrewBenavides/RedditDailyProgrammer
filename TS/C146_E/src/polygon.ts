@@ -2,6 +2,7 @@
 
 function processForm(e) {
     e.preventDefault();
+    $("#polygonContainer").show();
     var sides = getValueAsNumber("sides");
     var length = getValueAsNumber("length");
     var perimeter = calculatePermiter(sides, length);
@@ -27,15 +28,19 @@ function calculatePermiter(sides: number, length: number): number {
 function drawPolygon(sides: number, length: number) {
     var xCenter = length + 5;
     var yCenter = length + 5;
+
     function getPoint(center: number, coor: number, func: (x: number) => number) {
         return center + length * func(coor);
     }
+
     function getX(coor: number) {
         return getPoint(xCenter, coor, Math.cos);
     }
+
     function getY(coor: number) {
         return getPoint(yCenter, coor, Math.sin);
     }
+
     var canvas = <HTMLCanvasElement>document.getElementById("polygon");
     var context = canvas.getContext("2d");
     canvas.width = xCenter * 2;
@@ -56,4 +61,5 @@ function drawPolygon(sides: number, length: number) {
 
 $(document).ready(function () {
     $("#polygonForm").submit(processForm);
+    $("#polygonContainer").hide();
 });
