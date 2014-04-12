@@ -1,5 +1,7 @@
 ﻿/// <reference path="../Scripts/typings/jquery/jquery.d.ts" />
 
+declare var SVG: any;
+
 function processForm(e) {
     e.preventDefault();
     $("#polygonContainer").show();
@@ -26,40 +28,21 @@ function calculatePermiter(sides: number, length: number): number {
 }
 
 function drawPolygon(sides: number, length: number) {
-    var xCenter = length + 5;
-    var yCenter = length + 5;
-
-    function getPoint(center: number, coor: number, func: (x: number) => number) {
-        return center + length * func(coor);
-    }
-
-    function getX(coor: number) {
-        return getPoint(xCenter, coor, Math.cos);
-    }
-
-    function getY(coor: number) {
-        return getPoint(yCenter, coor, Math.sin);
-    }
-
-    var canvas = <HTMLCanvasElement>document.getElementById("polygon");
-    var context = canvas.getContext("2d");
-    canvas.width = xCenter * 2;
-    canvas.height = yCenter * 2;
-
-    context.beginPath();
-    context.moveTo(getX(0), getY(0));
-
-    for (var i = 1; i <= sides; i++) {
-        var coor = i * 2 * Math.PI / sides;
-        context.lineTo(getX(coor), getY(coor));
-    }
-
-    context.strokeStyle = "#000000";
-    context.lineWidth = 1;
-    context.stroke();
+    polygon.animate(500).ngon({
+        radius: length,
+        edges: sides
+    });
 }
+
+var draw;
+var polygon;
 
 $(document).ready(function () {
     $("#polygonForm").submit(processForm);
     $("#polygonContainer").hide();
+    draw = SVG('polygon');
+    polygon = draw.polygon().ngon({
+        radius: 0,
+        edges: 0
+    });
 });
