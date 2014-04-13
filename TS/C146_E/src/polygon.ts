@@ -27,11 +27,12 @@ function calculatePermiter(sides: number, length: number): number {
     return perimeter;
 }
 
-function drawPolygon(sides: number, length: number) {
+function drawPolygon(edges: number, radius: number) {
     polygon.animate(500).ngon({
-        radius: length,
-        edges: sides
+        radius: radius,
+        edges: edges
     });
+    draw.animate(500).size(polygon.width(), polygon.height());
 }
 
 var draw;
