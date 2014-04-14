@@ -31,8 +31,11 @@ function drawPolygon(edges: number, radius: number) {
     polygon.animate(500).ngon({
         radius: radius,
         edges: edges
+    }).during(function () {
+        draw.size(polygon.width(), polygon.height());
+    }).after(function () {
+        draw.size(polygon.width(), polygon.height());
     });
-    draw.animate(500).size(polygon.width(), polygon.height());
 }
 
 var draw;
@@ -41,7 +44,7 @@ var polygon;
 $(document).ready(function () {
     $("#polygonForm").submit(processForm);
     $("#polygonContainer").hide();
-    draw = SVG('polygon');
+    draw = SVG("polygon");
     polygon = draw.polygon().ngon({
         radius: 0,
         edges: 0
