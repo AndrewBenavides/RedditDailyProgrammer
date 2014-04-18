@@ -2,19 +2,21 @@
 
 declare var SVG: any;
 
-function processForm(e) {
-    e.preventDefault();
+interface JQuery {
+    noUiSlider(settings: any): any;
+}
+
+function processForm() {
     $("#polygonContainer").show();
-    var sides = getValueAsNumber("sides");
-    var length = getValueAsNumber("length");
+    var sides = getValueAsNumber("#sides");
+    var length = getValueAsNumber("#length");
     var perimeter = calculatePermiter(sides, length);
     setPerimeter(perimeter);
     drawPolygon(sides, length);
 }
 
 function getValueAsNumber(id: string) {
-    var element = <HTMLInputElement>document.getElementById(id);
-    var value = parseFloat(element.value);
+    var value = Number($(id).val());
     return value;
 }
 
@@ -50,7 +52,6 @@ var svgElement;
 var polygon;
 
 $(document).ready(function () {
-    $("#polygonForm").submit(processForm);
     $("#polygonContainer").hide();
     svgElement = SVG("polygon");
     polygon = svgElement
@@ -61,4 +62,26 @@ $(document).ready(function () {
             radius: 0,
             edges: 0
         });
+
+    $('#sides')
+        .noUiSlider({
+            range: [3, 20],
+            start: 3,
+            step: 1,
+            handles: 1,
+            slide: processForm,
+            set: processForm
+        });
+
+  $('#length')
+        .noUiSlider({
+            range: [1, 2000],
+            start: 100,
+            step: 1,
+            handles: 1,
+            slide: processForm,
+            set: processForm
+        });
+
+    processForm();
 });
