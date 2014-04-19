@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="../Content/bootstrap.min.css" />
     <link rel="stylesheet" href="../Content/bootstrap-theme.min.css" />
     <link rel="stylesheet" href="../Content/noUiSlider/jquery.nouislider.css" />
+    <style>
+        .slider {
+            margin-left: 1%;
+            margin-right: 1%;
+        }
+    </style>
     <script src="../Scripts/jquery-2.1.0.min.js"></script>
     <script src="../Scripts/jquery.nouislider.js"></script>
     <script src="../Scripts/bootstrap.min.js"></script>
@@ -18,17 +24,24 @@
     <div class="container">
         <h1>[C146_E] Polygon Perimeter</h1>
         <div id="content">
-            <p>Number of sides</p>
-            <div id="sides" class="slider" />
-            <p>Length of sides</p>
-            <div id="length" class="slider" />
-        </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">Number of Sides: <span id="sidesValue"></span></div>
+                <div class="panel-body">
+                    <div id="sides" class="slider noUi-target noUi-horizontal noUi-background"></div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">Length of Sides: <span id="lengthValue"></span></div>
+                <div class="panel-body">
+                    <div id="length" class="slider noUi-target noUi-horizontal noUi-background"></div>
+                </div>
+            </div>
         <div id="polygonContainer" class="panel panel-primary">
             <div class="panel-heading">
                 <div class="panel-title">Perimeter: <span id="perimeter"></span></div>
             </div>
             <div class="panel-body">
-                <div id="polygon" />
+                <div id="polygon"></div>
             </div>
         </div>
     </div>
