@@ -6,22 +6,24 @@ interface JQuery {
     noUiSlider(settings: any): any;
 }
 
-function processForm() {
-    $("#polygonContainer").show();
+function process(): void {
     var sides = getValueAsNumber("#sides");
     var length = getValueAsNumber("#length");
     var perimeter = calculatePermiter(sides, length);
-    setPerimeter(perimeter);
+
+    updateElement("#sideValue", sides);
+    updateElement("#lengthValue", length);
+    updateElement("#perimeter", perimeter);
     drawPolygon(sides, length);
 }
 
-function getValueAsNumber(id: string) {
+function getValueAsNumber(id: string): number {
     var value = Number($(id).val());
     return value;
 }
 
-function setPerimeter(value: number) {
-    document.getElementById("perimeter").innerHTML = value.toString();
+function updateElement(id: string, value: any): void {
+    $(id).text(value.toString());
 }
 
 function calculatePermiter(sides: number, length: number): number {
@@ -29,7 +31,7 @@ function calculatePermiter(sides: number, length: number): number {
     return perimeter;
 }
 
-function drawPolygon(edges: number, radius: number) {
+function drawPolygon(edges: number, radius: number): void {
     polygon
         .animate(500)
         .ngon({
@@ -48,11 +50,7 @@ function resizeSvgContainer() {
     svgElement.size(polygon.width() + 2, polygon.height() + 2);
 }
 
-var svgElement;
-var polygon;
-
-$(document).ready(function () {
-    $("#polygonContainer").hide();
+function createPolygon(): void {
     svgElement = SVG("polygon");
     polygon = svgElement
         .polygon()
@@ -62,26 +60,27 @@ $(document).ready(function () {
             radius: 0,
             edges: 0
         });
+}
 
-    $('#sides')
+function createSlider(id: string, range: number[], start: number): void {
+    $(id)
         .noUiSlider({
-            range: [3, 20],
-            start: 3,
+            range: range,
+            start: start,
             step: 1,
             handles: 1,
-            slide: processForm,
-            set: processForm
+            slide: process,
+            set: process
         });
+}
 
-  $('#length')
-        .noUiSlider({
-            range: [1, 2000],
-            start: 100,
-            step: 1,
-            handles: 1,
-            slide: processForm,
-            set: processForm
-        });
+var svgElement;
+var polygon;
 
-    processForm();
+$(document).ready(function () {
+    createPolygon();
+    createSlider("#sides", [3, 20], 3);
+    createSlider("#length", [1, 2000], 100);
+
+    process();
 });
