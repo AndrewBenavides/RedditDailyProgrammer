@@ -4,6 +4,10 @@
 # Github wiki
 wiki/
 
+#Ignore generated javascript files for typescript projects
+TS/*/src/*.js
+TS/*/src/*.js.map
+
 # User-specific files
 *.suo
 *.user
