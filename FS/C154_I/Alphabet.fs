@@ -1,5 +1,55 @@
 ﻿open System
 
+type Alphabet(alphabetString: string) =
+    let alphabet = //List.ofSeq alphabetString
+        List.mapi (fun i c -> 
+            (c, i)
+        ) (List.ofSeq (alphabetString.ToUpper()))
+
+    let duplicate, missing =
+        let alphabet = List.ofSeq (alphabetString.ToUpper())
+        let standard = List.ofSeq "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        let rec check remaining duplicate missing =
+            if remaining = [] then (List.sort duplicate), (List.sort missing)
+            else
+                let current = List.head remaining
+                let cur, rem = List.partition (fun c -> c = current) alphabet
+                match cur.Length with
+                | 0 -> check remaining.Tail duplicate (current::missing)
+                | 1 -> check remaining.Tail duplicate missing
+                | _ -> check remaining.Tail (current::duplicate) missing
+        let duplicate, missing = check standard [] []
+        duplicate, missing
+    
+
+    member this.DuplicateLetters = duplicate
+    member this.MissingLetters = missing
+    member this.IsValid =
+        if (List.isEmpty this.DuplicateLetters && List.isEmpty this.MissingLetters) then
+            true
+        else
+            false
+    
+    member this.InvalidationMessage =
+        let stringify (lst: List<char>) =
+            List.fold (fun acc elem -> sprintf "%s, %c" acc elem) (string lst.Head) lst.Tail
+        
+        let build typeString lst =
+            if not (List.isEmpty lst) then
+                Some(sprintf "%s Letters: %s" typeString (stringify lst))
+            else 
+                None
+
+        let messages = 
+            [
+                build "Duplicates" this.DuplicateLetters
+                build "Missing" this.MissingLetters
+            ] |> 
+            List.filter (fun m -> m.IsSome) |>
+            List.map (fun m -> m.Value )
+
+        List.reduce (fun acc elem -> sprintf "%s\n%s" acc elem) messages
+               
 type Sorter(alphabetString: string, words: List<string>) =
     let alphabet = //List.ofSeq alphabetString
         List.mapi (fun i c -> 
