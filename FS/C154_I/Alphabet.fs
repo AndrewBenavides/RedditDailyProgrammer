@@ -20,15 +20,15 @@ type Alphabet(alphabetString: string) =
                 | _ -> check remaining.Tail (current::duplicate) missing
         let duplicate, missing = check standard [] []
         duplicate, missing
-    
 
     member this.DuplicateLetters = duplicate
-    member this.MissingLetters = missing
     member this.IsValid =
         if (List.isEmpty this.DuplicateLetters && List.isEmpty this.MissingLetters) then
             true
         else
             false
+    member this.Letters = alphabet
+    member this.MissingLetters = missing
     
     member this.InvalidationMessage =
         let stringify (lst: List<char>) =
@@ -48,34 +48,9 @@ type Alphabet(alphabetString: string) =
             List.filter (fun m -> m.IsSome) |>
             List.map (fun m -> m.Value )
 
-        List.reduce (fun acc elem -> sprintf "%s\n%s" acc elem) messages
+        messages
                
-type Sorter(alphabetString: string, words: List<string>) =
-    let alphabet = //List.ofSeq alphabetString
-        List.mapi (fun i c -> 
-            (c, i)
-        ) (List.ofSeq (alphabetString.ToUpper()))
-
-    let CheckMissing =
-        let alphabet = List.ofSeq (alphabetString.ToUpper())
-        let standard = List.ofSeq "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        let rec check remaining duplicate missing =
-            if remaining = [] then (List.sort duplicate), (List.sort missing)
-            else
-                let current = List.head remaining
-                let cur, rem = List.partition (fun c -> c = current) alphabet
-                match cur.Length with
-                | 0 -> check remaining.Tail duplicate (current::missing)
-                | 1 -> check remaining.Tail duplicate missing
-                | _ -> check remaining.Tail (current::duplicate) missing
-        let duplicate, missing = check standard [] []
-        if not (List.isEmpty duplicate) then
-            printf "Duplicate: "
-            List.iter (printf "%A ") duplicate; printfn ""
-        if not (List.isEmpty missing) then
-            printf "Missing: "
-            List.iter (printf "%A ") missing; printfn ""
-
+type Sorter() =
     let Weigh (c: char) (alphabet: List<char * int>) =
         List.pick (fun pairs -> 
             match pairs with
@@ -103,8 +78,11 @@ type Sorter(alphabetString: string, words: List<string>) =
         let compare a b =  Compare a b alphabet
         List.sortWith compare words
 
-    member this.SortedWords =
-        SortWords alphabet words
+    member this.Sort(alphabet: Alphabet, words: List<string>) =
+        if alphabet.IsValid then
+            SortWords alphabet.Letters words
+        else
+            words
 
 type Parser() =
     let WordCollector length =
@@ -121,8 +99,12 @@ type Parser() =
         let input = Console.ReadLine()
         let numberOfWords, alphabet = 
             let args = input.Split(' ')
-            (Int32.Parse(args.[0]), args.[1])
-        let words = WordCollector numberOfWords
+            (Int32.Parse(args.[0]), Alphabet(args.[1]))
+        let words = 
+            if alphabet.IsValid then
+                WordCollector numberOfWords
+            else
+                List.Empty
         (alphabet, words)
 
     member this.Alphabet = alphabet
@@ -130,11 +112,17 @@ type Parser() =
 
 type Processor() =
     let parser = Parser()
-    let sorter = Sorter(parser.Alphabet, parser.Words)
+    let sorter = Sorter()
 
     member this.Process() =
-        printfn "\nSorted words:"
-        List.iter (fun word -> printfn "%s" word) sorter.SortedWords
+        let words = 
+            if parser.Alphabet.IsValid then
+                printfn "\nSorted words:"
+                sorter.Sort(parser.Alphabet, parser.Words)
+            else
+                printfn "\nAlphabet parsing errors:"
+                parser.Alphabet.InvalidationMessage
+        List.iter (printfn "%s") words
         printfn "\nProcess complete. Press enter to exit."
         Console.ReadLine() |> ignore
 
