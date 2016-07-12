@@ -46,6 +46,7 @@
     <Compile Include="ConversionMethodAttribute.cs" />
     <Compile Include="ConversionMethodFinder.cs" />
     <Compile Include="DuplicateKeyException.cs" />
+    <Compile Include="InputParser.cs" />
     <Compile Include="IUnit.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
