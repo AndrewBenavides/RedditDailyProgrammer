@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace C273_E {
     public interface IUnit {
         char Code { get; }
-        decimal ConvertTo<T>();
+        T ConvertTo<T>() where T : IUnit;
         decimal Value { get; set; }
     }
 }

@@ -15,6 +15,10 @@ namespace C273_E {
             return (IUnit)Activator.CreateInstance(UnitSubclasses[code], value);
         }
 
+        public static T Create<T>(decimal value) where T : IUnit {
+            return (T)Activator.CreateInstance(typeof(T), value);
+        }
+
         public static Dictionary<char, Type> GetUnitSubClasses() {
             return AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
@@ -27,7 +31,7 @@ namespace C273_E {
         }
         #endregion
 
-        public Dictionary<Type, Func<decimal>> ConversionMethods { get; }
+        public Dictionary<Type, Func<IUnit>> ConversionMethods { get; }
 
         public abstract char Code { get; }
         public decimal Value { get; set; }
@@ -37,28 +41,28 @@ namespace C273_E {
             ConversionMethods = GetConversionMethods();
         }
 
-        public decimal ConvertTo<T>() {
-            Func<decimal> conversionMethod;
+        public T ConvertTo<T>() where T : IUnit {
+            Func<IUnit> conversionMethod;
             if (ConversionMethods.TryGetValue(typeof(T), out conversionMethod)) {
-                return conversionMethod();
+                return (T)conversionMethod();
             } else {
                 throw new NotImplementedException();
             }
         }
 
-        public Dictionary<Type, Func<decimal>> GetConversionMethods() {
-            var dict = new Dictionary<Type, Func<decimal>>();
+        public Dictionary<Type, Func<IUnit>> GetConversionMethods() {
+            var dict = new Dictionary<Type, Func<IUnit>>();
             var methods = this.GetType().GetMethods()
                 .Where(m => m.GetCustomAttribute<ConversionMethodAttribute>() != null);
             foreach(var methodInfo in methods) {
                 var key = methodInfo.GetCustomAttribute<ConversionMethodAttribute>().Target;
-                var value = BuildFunc<Func<decimal>>(methodInfo);
+                var value = BuildFunc<Func<IUnit>>(methodInfo);
                 AddToDictionary(dict, key, value);
             }
             return dict;
         }
 
-        private void AddToDictionary(Dictionary<Type, Func<decimal>> dictionary, Type key, Func<decimal> value) {
+        private void AddToDictionary(Dictionary<Type, Func<IUnit>> dictionary, Type key, Func<IUnit> value) {
             if (!dictionary.ContainsKey(key)) {
                 dictionary.Add(key, value);
             } else {

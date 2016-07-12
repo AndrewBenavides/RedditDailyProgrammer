@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 namespace C273_E {
     class Program {
         static void Main(string[] args) {
-            var deg = Unit.Create('d', 200);
-            var rad = deg.ConvertTo<Units.Radians>();
-            //var rad = deg.ConvertTo<Units.Radians>();
-            //deg.GetConversionMethods();
-
+            var deg = Unit.Create<Units.Degree>(200);
+            var rad = deg.ConvertTo<Units.Radian>();
+        
             string input;
             do {
                 Console.Write("Input conversion parameters: ");
