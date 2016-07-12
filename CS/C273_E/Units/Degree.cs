@@ -11,7 +11,7 @@ namespace C273_E.Units {
         public Degree(decimal value) : base(value) {
         }
 
-        [ConversionMethod(target: typeof(Radian))]
+        [ConversionMethod]
         public Radian ConvertToRadians() {
             return Unit.Create<Radian>(Value * ((decimal)Math.PI / 180M));
         }

@@ -55,7 +55,7 @@ namespace C273_E {
             var methods = this.GetType().GetMethods()
                 .Where(m => m.GetCustomAttribute<ConversionMethodAttribute>() != null);
             foreach(var methodInfo in methods) {
-                var key = methodInfo.GetCustomAttribute<ConversionMethodAttribute>().Target;
+                var key = methodInfo.ReturnType;
                 var value = BuildFunc<Func<IUnit>>(methodInfo);
                 AddToDictionary(dict, key, value);
             }
