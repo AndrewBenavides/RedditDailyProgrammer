@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.Linq.Expressions;
 
 namespace C273_E {
     public abstract class Unit : IUnit {
@@ -38,7 +34,7 @@ namespace C273_E {
 
         protected Unit(decimal value) {
             Value = value;
-            ConversionMethods = GetConversionMethods();
+            ConversionMethods = this.GetConversionMethods();
         }
 
         public T ConvertTo<T>() where T : IUnit {
@@ -50,33 +46,5 @@ namespace C273_E {
             }
         }
 
-        public Dictionary<Type, Func<IUnit>> GetConversionMethods() {
-            var dict = new Dictionary<Type, Func<IUnit>>();
-            var methods = this.GetType().GetMethods()
-                .Where(m => m.GetCustomAttribute<ConversionMethodAttribute>() != null);
-            foreach(var methodInfo in methods) {
-                var key = methodInfo.ReturnType;
-                var value = BuildFunc<Func<IUnit>>(methodInfo);
-                AddToDictionary(dict, key, value);
-            }
-            return dict;
-        }
-
-        private void AddToDictionary(Dictionary<Type, Func<IUnit>> dictionary, Type key, Func<IUnit> value) {
-            if (!dictionary.ContainsKey(key)) {
-                dictionary.Add(key, value);
-            } else {
-                var message = string.Format("{0} already has a conversion methods for converting to {1}. This method will be ignored.", GetType().Name, key.Name);
-                Console.WriteLine(message);
-            }
-        }
-
-        private T BuildFunc<T>(MethodInfo method) {
-            //http://stackoverflow.com/a/2933227
-            var instance = Expression.Constant(this);
-            var call = Expression.Call(instance, method);
-            var func = Expression.Lambda<T>(call).Compile();
-            return func;
-        }
     }
 }
