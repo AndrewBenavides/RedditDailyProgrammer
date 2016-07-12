@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 namespace C273_E {
     class Program {
         static void Main(string[] args) {
-            var deg = Unit.Create<Units.Degree>(200);
-            var rad = deg.ConvertTo<Units.Radian>();
-        
             string input;
             do {
                 Console.Write("Input conversion parameters: ");
@@ -20,10 +17,6 @@ namespace C273_E {
         }
 
         public void ConvertTo<TIn, TOut>(TIn input, TOut output) {
-            throw new NotImplementedException();
-        }
-
-        public static ConversionOrder ParseInput(string input) {
             throw new NotImplementedException();
         }
     }
@@ -39,16 +32,12 @@ namespace C273_E {
             var validation = Validate();
             if (!string.IsNullOrWhiteSpace(validation)) return validation;
 
-            var outputType = Input.Substring(Input.Length - 1, 1).SingleOrDefault();
-            var inputType = Input.Substring(Input.Length - 2, 1).SingleOrDefault();
+            var outputUnit = Input.Substring(Input.Length - 1, 1).SingleOrDefault();
+            var inputUnit = Input.Substring(Input.Length - 2, 1).SingleOrDefault();
             var inputValue = decimal.Parse(Input.Substring(0, Input.Length - 2));
-            //var conversion = new ConversionOrder() {
-            //    InputAmount = inputValue,
-            //    InputUnit = inputType,
-            //    OutputUnit = outputType,
-            //    OutputAmount =
-            //};
-            return string.Empty;
+            var input = Unit.Create(inputUnit, inputValue);
+            var output = input.ConvertTo(outputUnit);
+            return output.Value.ToString();
         }
 
         public string Validate() {
@@ -64,12 +53,5 @@ namespace C273_E {
                 .Count(c => char.IsNumber(c)) < 1) return "No amount specified.";
             return string.Empty;
         }
-    }
-
-    public class ConversionOrder {
-        public decimal InputAmount { get; set; }
-        public decimal OutputAmount { get; set; }
-        public IUnit InputUnit { get; set; }
-        public IUnit OutputUnit { get; set; }
     }
 }

@@ -37,14 +37,26 @@ namespace C273_E {
             ConversionMethods = this.GetConversionMethods();
         }
 
-        public T ConvertTo<T>() where T : IUnit {
+        public IUnit ConvertTo(Type target) {
             Func<IUnit> conversionMethod;
-            if (ConversionMethods.TryGetValue(typeof(T), out conversionMethod)) {
-                return (T)conversionMethod();
+            if (ConversionMethods.TryGetValue(target, out conversionMethod)) {
+                return conversionMethod();
             } else {
                 throw new NotImplementedException();
             }
         }
 
+        public IUnit ConvertTo(char code) {
+            Type type;
+            if (UnitSubclasses.TryGetValue(code, out type)) {
+                return ConvertTo(type);
+            } else {
+                throw new NotImplementedException();
+            }
+        }
+
+        public T ConvertTo<T>() where T : IUnit {
+            return (T)ConvertTo(typeof(T));
+        }
     }
 }
