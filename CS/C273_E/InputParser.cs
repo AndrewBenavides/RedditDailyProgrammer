@@ -13,7 +13,7 @@ namespace C273_E {
             try {
                 var inputUnit = Unit.Create(inputType, inputValue);
                 var outputUnit = inputUnit.ConvertTo(outputType);
-                return outputUnit.Value.ToString("F2") + outputUnit.Code;
+                return outputUnit.Value.ToString("0.##") + outputUnit.Code;
             } catch (System.Exception exception) {
                 return exception.Message;
             }
