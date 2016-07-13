@@ -11,5 +11,10 @@ namespace C273_E.Units {
         public Degree ConvertToDegrees() {
             return Unit.Create<Degree>(Value * (180M / (decimal)Math.PI));
         }
+
+        [ConversionMethod]
+        public Radian ConvertToRadians() {
+            return this;
+        }
     }
 }
