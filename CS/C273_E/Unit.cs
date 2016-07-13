@@ -38,24 +38,13 @@ namespace C273_E {
         }
         #endregion
 
-        public Dictionary<Type, Func<IUnit>> ConversionMethods { get; }
-
         public abstract char Code { get; }
+        public Dictionary<Type, Func<IUnit>> ConversionMethods { get; }
         public decimal Value { get; set; }
 
         protected Unit(decimal value) {
             Value = value;
             ConversionMethods = this.GetConversionMethods();
-        }
-
-        private IUnit ConvertTo(Type target) {
-            Func<IUnit> conversionMethod;
-            if (ConversionMethods.TryGetValue(target, out conversionMethod)) {
-                return conversionMethod();
-            } else {
-                var message = string.Format(@"No candidate for converting {0} to {1}.", GetType().Name, target.Name);
-                throw new NoConversionCandidateException(message);
-            }
         }
 
         public IUnit ConvertTo(char code) {
@@ -67,8 +56,14 @@ namespace C273_E {
             }
         }
 
-        public T ConvertTo<T>() where T : IUnit {
-            return (T)ConvertTo(typeof(T));
+        private IUnit ConvertTo(Type target) {
+            Func<IUnit> conversionMethod;
+            if (ConversionMethods.TryGetValue(target, out conversionMethod)) {
+                return conversionMethod();
+            } else {
+                var message = string.Format(@"No candidate for converting {0} to {1}.", GetType().Name, target.Name);
+                throw new NoConversionCandidateException(message);
+            }
         }
     }
 }
