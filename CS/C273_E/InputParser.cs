@@ -1,41 +1,33 @@
 ﻿using System.Linq;
 
 namespace C273_E {
-    public class InputParser {
-        public string Input { get; }
-
-        public InputParser(string input) {
-            Input = input;
-        }
-
-        public string Process() {
-            var validation = Validate();
+    public static class InputParser {
+        public static string Process(string input) {
+            var validation = Validate(input);
             if (!string.IsNullOrWhiteSpace(validation)) return validation;
 
-            var outputUnit = Input.Substring(Input.Length - 1, 1).SingleOrDefault();
-            var inputUnit = Input.Substring(Input.Length - 2, 1).SingleOrDefault();
-            var inputValue = decimal.Parse(Input.Substring(0, Input.Length - 2));
+            var outputType = input[input.Length - 1];
+            var inputType = input[input.Length - 2];
+            var inputValue = decimal.Parse(input.Substring(0, input.Length - 2));
 
             try {
-                var input = Unit.Create(inputUnit, inputValue);
-                var output = input.ConvertTo(outputUnit);
-                return output.Value.ToString();
+                var inputUnit = Unit.Create(inputType, inputValue);
+                var outputUnit = inputUnit.ConvertTo(outputType);
+                return outputUnit.Value.ToString("F2") + outputUnit.Code;
             } catch (System.Exception exception) {
                 return exception.Message;
             }
         }
 
-        public string Validate() {
-            if (string.IsNullOrWhiteSpace(Input)) return "Input is empty or white space.";
-            if (Input
-                .AsEnumerable()
-                .Count(c => char.IsLetter(c)) < 2) return "Not enough conversion unit parameters";
-            if (Input
-                .AsEnumerable()
-                .Count(c => char.IsLetter(c)) > 2) return "Too many conversion unit parameters.";
-            if (Input
-                .AsEnumerable()
-                .Count(c => char.IsNumber(c)) < 1) return "No amount specified.";
+        public static string Validate(string input) {
+            if (string.IsNullOrWhiteSpace(input))
+                return "Input is empty or white space.";
+            if (input.Count(c => char.IsLetter(c)) < 2)
+                return "Not enough conversion unit parameters";
+            if (input.Count(c => char.IsLetter(c)) > 2)
+                return "Too many conversion unit parameters.";
+            if (input.Count(c => char.IsNumber(c)) < 1)
+                return "No amount specified.";
             return string.Empty;
         }
     }

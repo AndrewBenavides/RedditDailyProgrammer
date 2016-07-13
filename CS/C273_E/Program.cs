@@ -9,8 +9,7 @@ namespace C273_E {
                 Console.Write("Input conversion parameters: ");
                 input = Console.ReadLine();
                 if (input == "quit") break;
-                var parser = new InputParser(input);
-                Console.WriteLine(parser.Process());
+                Console.WriteLine(InputParser.Process(input));
             } while (true);
         }
     }
