@@ -1,4 +1,5 @@
-﻿using System;
+﻿using C273_E.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +9,12 @@ namespace C273_E {
         public static Dictionary<char, Type> UnitSubclasses { get; } = GetUnitSubClasses();
 
         public static IUnit Create(char code, decimal value) {
-            return (IUnit)Activator.CreateInstance(UnitSubclasses[code], value);
+            Type type;
+            if (UnitSubclasses.TryGetValue(code, out type)) {
+                return (IUnit)Activator.CreateInstance(UnitSubclasses[code], value);
+            } else {
+                throw GetUnitTypeNotImplementedException(code);
+            }
         }
 
         public static T Create<T>(decimal value) where T : IUnit {
@@ -25,6 +31,11 @@ namespace C273_E {
                     subclass => subclass.GetType()
                 );
         }
+
+        public static UnitTypeNotImplementedException GetUnitTypeNotImplementedException(char code) {
+            var message = string.Format(@"A unit type with code '{0}' is not implemented.", code);
+            return new UnitTypeNotImplementedException(code, message);
+        }
         #endregion
 
         public Dictionary<Type, Func<IUnit>> ConversionMethods { get; }
@@ -37,12 +48,13 @@ namespace C273_E {
             ConversionMethods = this.GetConversionMethods();
         }
 
-        public IUnit ConvertTo(Type target) {
+        private IUnit ConvertTo(Type target) {
             Func<IUnit> conversionMethod;
             if (ConversionMethods.TryGetValue(target, out conversionMethod)) {
                 return conversionMethod();
             } else {
-                throw new NotImplementedException();
+                var message = string.Format(@"No candidate for converting {0} to {1}.", GetType().Name, target.Name);
+                throw new NoConversionCandidateException(message);
             }
         }
 
@@ -51,7 +63,7 @@ namespace C273_E {
             if (UnitSubclasses.TryGetValue(code, out type)) {
                 return ConvertTo(type);
             } else {
-                throw new NotImplementedException();
+                throw GetUnitTypeNotImplementedException(code);
             }
         }
 

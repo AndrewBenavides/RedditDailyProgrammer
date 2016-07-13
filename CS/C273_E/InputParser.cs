@@ -15,9 +15,14 @@ namespace C273_E {
             var outputUnit = Input.Substring(Input.Length - 1, 1).SingleOrDefault();
             var inputUnit = Input.Substring(Input.Length - 2, 1).SingleOrDefault();
             var inputValue = decimal.Parse(Input.Substring(0, Input.Length - 2));
-            var input = Unit.Create(inputUnit, inputValue);
-            var output = input.ConvertTo(outputUnit);
-            return output.Value.ToString();
+
+            try {
+                var input = Unit.Create(inputUnit, inputValue);
+                var output = input.ConvertTo(outputUnit);
+                return output.Value.ToString();
+            } catch (System.Exception exception) {
+                return exception.Message;
+            }
         }
 
         public string Validate() {
