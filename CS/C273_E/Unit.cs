@@ -34,7 +34,7 @@ namespace C273_E {
 
         public static UnitTypeNotImplementedException GetUnitTypeNotImplementedException(char code) {
             var message = string.Format(@"A unit type with code '{0}' is not implemented.", code);
-            return new UnitTypeNotImplementedException(code, message);
+            return new UnitTypeNotImplementedException(message);
         }
         #endregion
 
